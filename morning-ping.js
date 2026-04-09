@@ -1,8 +1,8 @@
 // TypingMind Morning Ping Extension
 // CONFIGURE:
-const PING_HOUR = 7;
-const PING_MINUTE = 0;
-const PING_MESSAGE = "Good morning. Write me a morning note.";
+const PING_HOUR = 0;
+const PING_MINUTE = 1;
+const PING_MESSAGE = "Good morning. Write or read a note.";
 
 let hasPingedToday = false;
 
