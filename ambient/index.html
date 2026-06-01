@@ -27,9 +27,17 @@
             box-shadow: 0 0 20px 2px rgba(16, 185, 129, 0.2);
             animation: pulse-glow 3s infinite ease-in-out;
         }
+        .recording-glowing {
+            box-shadow: 0 0 20px 2px rgba(239, 68, 68, 0.3);
+            animation: pulse-glow-red 2s infinite ease-in-out;
+        }
         @keyframes pulse-glow {
             0%, 100% { box-shadow: 0 0 20px 2px rgba(16, 185, 129, 0.2); }
             50% { box-shadow: 0 0 35px 8px rgba(16, 185, 129, 0.4); }
+        }
+        @keyframes pulse-glow-red {
+            0%, 100% { box-shadow: 0 0 20px 2px rgba(239, 68, 68, 0.3); }
+            50% { box-shadow: 0 0 35px 8px rgba(239, 68, 68, 0.5); }
         }
     </style>
 </head>
@@ -43,11 +51,11 @@
             <span class="text-xs tracking-[0.3em] text-emerald-500 uppercase font-semibold">PineDesign Studio</span>
             <h1 class="text-4xl font-light tracking-wide text-stone-100">Ambient Studio Remixer</h1>
             <p class="text-sm text-stone-400 font-light max-w-md mx-auto">
-                Your high-fidelity 320kbps Norwegian recordings, automated and self-harmonizing in real-time.
+                Mix your pristine Norwegian recordings with real-time 432Hz ambient pads, perform live swells, and export your custom creations.
             </p>
         </div>
 
-        <!-- Master Play and Intelligent Drift Buttons -->
+        <!-- Master Play, Intelligent Drift, and Record Buttons -->
         <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
             <!-- Master Play Button -->
             <button id="master-play" class="w-full sm:w-auto px-8 py-4 rounded-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-semibold tracking-wide flex items-center justify-center gap-3 shadow-lg transition-all duration-300 hover:scale-102 active:scale-98">
@@ -61,14 +69,20 @@
                 <svg class="w-5 h-5 fill-none stroke-current" stroke-width="2" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 12c0-1.232-.046-2.453-.138-3.662a4.006 4.006 0 00-3.7-3.7 48.656 48.656 0 00-7.324 0 4.006 4.006 0 00-3.7 3.7c-.017.22-.032.441-.046.662M19.5 12l3-3m-3 3l-3-3M4.5 12l-3 3m3-3l3 3m1.5-6.662a48.524 48.524 0 017.324 0M5.138 15.662a4.006 4.006 0 003.7 3.7 48.656 48.656 0 007.324 0 4.006 4.006 0 003.7-3.7m-14.648 0l-3-3m3 3l3-3" />
                 </svg>
-                <span id="drift-btn-text">Enable Auto-Drift Remixing</span>
+                <span id="drift-btn-text">Enable Auto-Drift</span>
+            </button>
+
+            <!-- Live Record / Export Button -->
+            <button id="record-btn" class="w-full sm:w-auto px-8 py-4 rounded-full border border-red-500/30 bg-red-950/10 text-red-400 font-medium tracking-wide flex items-center justify-center gap-3 transition-all duration-300 hover:bg-red-950/30 hover:border-red-500/50">
+                <span class="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse" id="record-dot"></span>
+                <span id="record-btn-text">Record Live Mix</span>
             </button>
         </div>
 
-        <!-- The 3 Drag & Drop Slots + Synth Pad -->
+        <!-- The 3 Dynamic Slots + Synth Pad -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             
-            <!-- SLOT 0: 432Hz Synth Pad (Built-in Core Engine) -->
+            <!-- SLOT 0: 432Hz Synth Pad -->
             <div class="slot-card rounded-2xl p-6 flex flex-col justify-between space-y-4 slot-active">
                 <div>
                     <div class="flex justify-between items-start">
@@ -87,7 +101,7 @@
                 </div>
             </div>
 
-            <!-- SLOT 1: Grounding Layer (Nature Loops) -->
+            <!-- SLOT 1: Grounding Layer -->
             <div id="card-1" class="slot-card rounded-2xl p-6 flex flex-col justify-between space-y-4">
                 <div>
                     <div class="flex justify-between items-start">
@@ -95,15 +109,24 @@
                         <span id="status-1" class="text-[10px] text-stone-500">Empty</span>
                     </div>
                     <h3 class="text-lg font-normal text-stone-200 mt-2">Nature Loop</h3>
-                    <p class="text-xs text-stone-400 font-light mt-1">Recommended files: <strong class="text-stone-300">flowing water.mp3</strong> or <strong class="text-stone-300">soft wind.mp3</strong></p>
+                    <p class="text-xs text-stone-400 font-light mt-1 mb-3">Choose from your library or drop your own loop:</p>
                     
+                    <!-- Sound Library Dropdown -->
+                    <select id="library-select-1" class="bg-stone-900/80 border border-white/10 rounded-xl p-2.5 text-xs text-stone-300 w-full mb-3 focus:outline-none focus:border-emerald-500/40">
+                        <option value="">[ Select Built-In Sound... ]</option>
+                        <option value="./flowing water.mp3">Fjord Stream (flowing water.mp3)</option>
+                        <option value="./soft wind.mp3">Whispering Wind (soft wind.mp3)</option>
+                    </select>
+
+                    <span class="text-[10px] text-stone-500 block text-center mb-1">- or import local file -</span>
+
                     <!-- File Input -->
-                    <label class="mt-3 block border border-dashed border-stone-700 hover:border-emerald-500/40 rounded-xl p-3 text-center cursor-pointer transition-colors duration-300">
-                        <span class="text-xs text-stone-400 font-light">Choose or drop audio file</span>
+                    <label class="block border border-dashed border-stone-700 hover:border-emerald-500/40 rounded-xl p-2.5 text-center cursor-pointer transition-colors duration-300">
+                        <span class="text-xs text-stone-400 font-light">Choose or drop file</span>
                         <input id="file-1" type="file" accept="audio/*" class="hidden">
                     </label>
                 </div>
-                <div class="space-y-2 mt-auto">
+                <div class="space-y-2 mt-auto pt-4">
                     <div class="flex justify-between text-xs text-stone-400">
                         <span>Layer Level</span>
                         <span id="val-1">50%</span>
@@ -120,15 +143,24 @@
                         <span id="status-2" class="text-[10px] text-stone-500">Empty</span>
                     </div>
                     <h3 class="text-lg font-normal text-stone-200 mt-2">Organic Texture</h3>
-                    <p class="text-xs text-stone-400 font-light mt-1">Recommended files: <strong class="text-stone-300">fireplace.mp3</strong> or <strong class="text-stone-300">soft wind.mp3</strong></p>
+                    <p class="text-xs text-stone-400 font-light mt-1 mb-3">Choose from your library or drop your own loop:</p>
                     
+                    <!-- Sound Library Dropdown -->
+                    <select id="library-select-2" class="bg-stone-900/80 border border-white/10 rounded-xl p-2.5 text-xs text-stone-300 w-full mb-3 focus:outline-none focus:border-emerald-500/40">
+                        <option value="">[ Select Built-In Sound... ]</option>
+                        <option value="./fireplace.mp3">Hearth Fire (fireplace.mp3)</option>
+                        <option value="./Sample_forest-drone.mp3">Forest Drone (Sample_forest-drone.mp3)</option>
+                    </select>
+
+                    <span class="text-[10px] text-stone-500 block text-center mb-1">- or import local file -</span>
+
                     <!-- File Input -->
-                    <label class="mt-3 block border border-dashed border-stone-700 hover:border-emerald-500/40 rounded-xl p-3 text-center cursor-pointer transition-colors duration-300">
-                        <span class="text-xs text-stone-400 font-light">Choose or drop audio file</span>
+                    <label class="block border border-dashed border-stone-700 hover:border-emerald-500/40 rounded-xl p-2.5 text-center cursor-pointer transition-colors duration-300">
+                        <span class="text-xs text-stone-400 font-light">Choose or drop file</span>
                         <input id="file-2" type="file" accept="audio/*" class="hidden">
                     </label>
                 </div>
-                <div class="space-y-2 mt-auto">
+                <div class="space-y-2 mt-auto pt-4">
                     <div class="flex justify-between text-xs text-stone-400">
                         <span>Layer Level</span>
                         <span id="val-2">50%</span>
@@ -137,7 +169,7 @@
                 </div>
             </div>
 
-            <!-- SLOT 3: Harmonic Sparks (Instrumental/Chords) -->
+            <!-- SLOT 3: Harmonic Sparks -->
             <div id="card-3" class="slot-card rounded-2xl p-6 flex flex-col justify-between space-y-4">
                 <div>
                     <div class="flex justify-between items-start">
@@ -145,11 +177,20 @@
                         <span id="status-3" class="text-[10px] text-stone-500">Empty</span>
                     </div>
                     <h3 class="text-lg font-normal text-stone-200 mt-2">Tonal / Melody Spark</h3>
-                    <p class="text-xs text-stone-400 font-light mt-1">Recommended G-key files: <strong class="text-stone-300">Sample_Floor-pads.mp3</strong> or <strong class="text-stone-300">Sample_bass-shimmer.mp3</strong></p>
+                    <p class="text-xs text-stone-400 font-light mt-1 mb-3">Choose G-key samples to glide with the Auto-Harmonizer:</p>
                     
+                    <!-- Sound Library Dropdown -->
+                    <select id="library-select-3" class="bg-stone-900/80 border border-white/10 rounded-xl p-2.5 text-xs text-stone-300 w-full mb-3 focus:outline-none focus:border-emerald-500/40">
+                        <option value="">[ Select Built-In Sound... ]</option>
+                        <option value="./Sample_Floor-pads.mp3">Velvet G-Pads (Sample_Floor-pads.mp3)</option>
+                        <option value="./Sample_bass-shimmer.mp3">G-Bass Shimmer (Sample_bass-shimmer.mp3)</option>
+                    </select>
+
+                    <span class="text-[10px] text-stone-500 block text-center mb-1">- or import local file -</span>
+
                     <!-- File Input -->
-                    <label class="mt-3 block border border-dashed border-stone-700 hover:border-emerald-500/40 rounded-xl p-3 text-center cursor-pointer transition-colors duration-300">
-                        <span class="text-xs text-stone-400 font-light">Choose or drop G-key audio</span>
+                    <label class="block border border-dashed border-stone-700 hover:border-emerald-500/40 rounded-xl p-2.5 text-center cursor-pointer transition-colors duration-300">
+                        <span class="text-xs text-stone-400 font-light">Choose or drop file</span>
                         <input id="file-3" type="file" accept="audio/*" class="hidden">
                     </label>
 
@@ -159,7 +200,7 @@
                         <span id="harmonizer-text">Auto-Harmonizer inactive</span>
                     </div>
                 </div>
-                <div class="space-y-2 mt-auto">
+                <div class="space-y-2 mt-auto pt-4">
                     <div class="flex justify-between text-xs text-stone-400">
                         <span>Layer Level</span>
                         <span id="val-3">50%</span>
@@ -173,7 +214,7 @@
         <!-- Live Status Screen -->
         <div id="console-box" class="text-left text-[10px] font-mono text-stone-400 bg-black/60 p-4 rounded-2xl border border-white/5 w-full max-h-40 overflow-y-auto">
             <strong class="text-stone-300">Intelligent Studio Console:</strong>
-            <div id="console-text" class="text-emerald-500 mt-1">Console online. Import your WAV/MP3 files to build an interactive soundstage...</div>
+            <div id="console-text" class="text-emerald-500 mt-1">Console online. Select a built-in loop, or drop your own, then start the soundstage...</div>
         </div>
         
     </div>
@@ -186,6 +227,7 @@
         let audioCtx = null;
         let isPlaying = false;
         let isDrifting = false;
+        let isRecording = false;
         let referencePitch = 432.0;
 
         let currentChordIndex = -1;
@@ -197,11 +239,18 @@
         let synthGainNode = null;
         let lowpassFilter = null;
 
+        // Recording Nodes
+        let mediaRecorder = null;
+        let recordChunks = [];
+        let recordDestination = null;
+        let recordTimer = null;
+        let recordSeconds = 0;
+
         // Custom Slots Data Array (nature / custom samples)
         const slots = [
-            { id: 1, fileInput: null, audioBuffer: null, sourceNode: null, gainNode: null, volSlider: null, volVal: null, card: null, status: null },
-            { id: 2, fileInput: null, audioBuffer: null, sourceNode: null, gainNode: null, volSlider: null, volVal: null, card: null, status: null },
-            { id: 3, fileInput: null, audioBuffer: null, sourceNode: null, gainNode: null, volSlider: null, volVal: null, card: null, status: null }
+            { id: 1, fileInput: null, select: null, audioBuffer: null, sourceNode: null, gainNode: null, volSlider: null, volVal: null, card: null, status: null },
+            { id: 2, fileInput: null, select: null, audioBuffer: null, sourceNode: null, gainNode: null, volSlider: null, volVal: null, card: null, status: null },
+            { id: 3, fileInput: null, select: null, audioBuffer: null, sourceNode: null, gainNode: null, volSlider: null, volVal: null, card: null, status: null }
         ];
 
         // Active Synth Voice Tracker
@@ -222,6 +271,9 @@
         const playBtnText = document.getElementById('play-btn-text');
         const driftBtn = document.getElementById('drift-btn');
         const driftBtnText = document.getElementById('drift-btn-text');
+        const recordBtn = document.getElementById('record-btn');
+        const recordBtnText = document.getElementById('record-btn-text');
+        const recordDot = document.getElementById('record-dot');
         
         const volSynthSlider = document.getElementById('vol-synth');
         const valSynthText = document.getElementById('val-synth');
@@ -236,14 +288,37 @@
         // Initialize slots selectors
         slots.forEach(slot => {
             slot.fileInput = document.getElementById(`file-${slot.id}`);
+            slot.select = document.getElementById(`library-select-${slot.id}`);
             slot.volSlider = document.getElementById(`vol-${slot.id}`);
             slot.volVal = document.getElementById(`val-${slot.id}`);
             slot.card = document.getElementById(`card-${slot.id}`);
             slot.status = document.getElementById(`status-${slot.id}`);
 
-            // Handle Local File Imports
+            // Handle Local File Drag & Drop / Selection
             slot.fileInput.addEventListener('change', (e) => {
+                // Clear dropdown visual selection when uploading custom file
+                slot.select.value = "";
                 handleFileSelect(slot, e.target.files[0]);
+            });
+
+            // Handle Library Dropdown Selection
+            slot.select.addEventListener('change', (e) => {
+                const url = e.target.value;
+                if (url) {
+                    initAudioContextOnInteraction();
+                    loadRelativeAsset(slot, url);
+                } else {
+                    // Empty the slot buffer
+                    slot.audioBuffer = null;
+                    stopSlotBuffer(slot);
+                    slot.card.classList.remove('slot-active');
+                    slot.status.innerText = "Empty";
+                    slot.status.className = "text-[10px] text-stone-500";
+                    if (slot.id === 3) {
+                        harmonizerDot.className = "w-1.5 h-1.5 rounded-full bg-stone-700";
+                        harmonizerText.innerText = "Auto-Harmonizer inactive";
+                    }
+                }
             });
         });
 
@@ -263,6 +338,17 @@
 
         function midiToFreq(midiNote, reference) {
             return reference * (2.0 ** ((midiNote - 69) / 12.0));
+        }
+
+        // Unlocks Audio Context securely on any scroll/touch/tap gesture (iOS safeguard)
+        function initAudioContextOnInteraction() {
+            if (!audioCtx) {
+                const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+                audioCtx = new AudioContextClass();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
         }
 
         // Bulletproof Legacy Stereo Panner Fallback for Safari/iOS
@@ -287,10 +373,10 @@
             
             const reader = new FileReader();
             reader.onload = function(evt) {
-                // We need an AudioContext to decode
-                const tempCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+                // Ensure context is awake
+                initAudioContextOnInteraction();
                 
-                tempCtx.decodeAudioData(evt.target.result, (buffer) => {
+                audioCtx.decodeAudioData(evt.target.result, (buffer) => {
                     slot.audioBuffer = buffer;
                     slot.card.classList.add('slot-active');
                     slot.status.innerText = "Ready";
@@ -316,11 +402,11 @@
             reader.readAsArrayBuffer(file);
         }
 
-        // Async Loader for relative server files (CORS-friendly on HTTP server)
+        // Async Loader for relative server files (CORS-friendly on HTTP server / GitHub Pages)
         async function loadRelativeAsset(slot, url) {
-            if (!audioCtx) return;
+            initAudioContextOnInteraction();
             slot.status.innerText = "Loading...";
-            logMsg(`HTTP Server: Auto-fetching loop "${url}"...`);
+            logMsg(`Fetching loop asset "${url}"...`);
             try {
                 const response = await fetch(url);
                 if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
@@ -330,7 +416,7 @@
                     slot.card.classList.add('slot-active');
                     slot.status.innerText = "Ready";
                     slot.status.className = "text-[10px] text-emerald-400 font-bold";
-                    logMsg(`Successfully loaded relative asset: ${url}`);
+                    logMsg(`Successfully loaded asset: ${url}`);
                     
                     if (slot.id === 3) {
                         harmonizerBadge.className = "mt-2 text-[10px] tracking-wide text-emerald-400/85 font-medium flex items-center gap-1.5 duration-500";
@@ -347,9 +433,9 @@
                     logMsg(`Decode error on auto-load: ${url}`, true);
                 });
             } catch (e) {
-                slot.status.innerText = "CORS Block";
+                slot.status.innerText = "Error";
                 slot.status.className = "text-[10px] text-yellow-400 font-medium";
-                logMsg(`Local file block: "${url}". Please drag-and-drop the file manually or run via local HTTP server to activate auto-loading.`, false);
+                logMsg(`CORS / File access block: Could not fetch "${url}". If you are running locally without an HTTP server, please drag-and-drop the file manually!`, true);
             }
         }
 
@@ -608,12 +694,16 @@
                     isPlaying = false;
                     isDrifting = false;
                     
+                    if (isRecording) {
+                        toggleRecording(); // Stop recording if active
+                    }
+                    
                     playIcon.classList.remove('hidden');
                     pauseIcon.classList.add('hidden');
                     playBtnText.innerText = "Start Soundstage";
                     
                     driftBtn.classList.remove('drift-glowing');
-                    driftBtnText.innerText = "Enable Auto-Drift Remixing";
+                    driftBtnText.innerText = "Enable Auto-Drift";
                     
                     clearInterval(chordInterval);
                     clearInterval(driftInterval);
@@ -626,6 +716,7 @@
                         masterGain.gain.linearRampToValueAtTime(0, now + 1.2);
                         
                         setTimeout(() => {
+                            // Stop synth
                             activeSynthNodes.forEach(item => {
                                 item.nodes.forEach(node => {
                                     try { node.stop(); } catch(e){}
@@ -634,6 +725,7 @@
                             });
                             activeSynthNodes = [];
 
+                            // Stop slot files
                             slots.forEach(slot => {
                                 stopSlotBuffer(slot);
                                 try { slot.gainNode.disconnect(); } catch(e){}
@@ -671,20 +763,115 @@
                             playSlotBuffer(slot);
                         }
                     });
-
-                    // AUTO-LOAD TRIGGER:
-                    // If running via HTTP server (CORS-friendly), automatically load relative files!
-                    if (window.location.protocol.startsWith('http')) {
-                        logMsg("HTTP Server active! Initiating local auto-loading sequence...");
-                        loadRelativeAsset(slots[0], "./flowing water.mp3");
-                        loadRelativeAsset(slots[1], "./fireplace.mp3");
-                        loadRelativeAsset(slots[2], "./Sample_Floor-pads.mp3");
-                    } else {
-                        logMsg("Local File protocol (file://) active. Drag and drop your files manually.");
-                    }
                 }
             } catch (e) {
                 logMsg("togglePlay Error: " + e.message, true);
+            }
+        }
+
+        // REAL-TIME AUDIO RECORDER & EXPORTER
+        function toggleRecording() {
+            if (!isPlaying) {
+                logMsg("Please start the Soundstage first to record your mix!", true);
+                return;
+            }
+
+            if (isRecording) {
+                // STOP RECORDING & DOWNLOAD FILE
+                isRecording = false;
+                logMsg("Stopping recording. Preparing high-quality master file...");
+                
+                recordBtn.classList.remove('recording-glowing');
+                recordBtn.classList.add('border-red-500/30', 'bg-red-950/10', 'text-red-400');
+                recordBtn.classList.remove('bg-red-600', 'text-slate-950', 'border-red-500');
+                recordDot.classList.add('animate-pulse', 'bg-red-500');
+                recordDot.classList.remove('bg-slate-950');
+                recordBtnText.innerText = "Record Live Mix";
+                
+                clearInterval(recordTimer);
+                
+                try {
+                    mediaRecorder.stop();
+                } catch(e) {
+                    logMsg("MediaRecorder Stop Error: " + e.message, true);
+                }
+            } else {
+                // START RECORDING
+                isRecording = true;
+                recordChunks = [];
+                recordSeconds = 0;
+                logMsg("Master Recorder Engaged. Recording all active channels in real-time...");
+                
+                recordBtn.classList.add('recording-glowing');
+                recordBtn.classList.remove('border-red-500/30', 'bg-red-950/10', 'text-red-400');
+                recordBtn.classList.add('bg-red-600', 'text-slate-950', 'border-red-500');
+                recordDot.classList.remove('animate-pulse', 'bg-red-500');
+                recordDot.classList.add('bg-slate-950');
+                recordBtnText.innerText = "Recording (00:00) - Stop";
+
+                try {
+                    // Create MediaStream destination
+                    recordDestination = audioCtx.createMediaStreamDestination();
+                    masterGain.connect(recordDestination); // Feed everything playing into recorder!
+
+                    // Determine browser supported formats (highly robust, cross-platform)
+                    let options = {};
+                    if (MediaRecorder.isTypeSupported('audio/webm')) {
+                        options = { mimeType: 'audio/webm' };
+                        logMsg("Recorder: Initialized high-quality WebM container.");
+                    } else if (MediaRecorder.isTypeSupported('audio/mp4')) {
+                        options = { mimeType: 'audio/mp4' };
+                        logMsg("Recorder: Initialized AAC container (Safari/iOS Optimized).");
+                    }
+
+                    mediaRecorder = new MediaRecorder(recordDestination.stream, options);
+                    
+                    mediaRecorder.ondataavailable = function(e) {
+                        if (e.data && e.data.size > 0) {
+                            recordChunks.push(e.data);
+                        }
+                    };
+
+                    mediaRecorder.onstop = function() {
+                        // Create compiled audio Blob from chunks
+                        const mime = mediaRecorder.mimeType || 'audio/webm';
+                        const blob = new Blob(recordChunks, { type: mime });
+                        const url = URL.createObjectURL(blob);
+                        
+                        // Generate dynamic timestamped filename
+                        const d = new Date();
+                        const dateStr = d.toISOString().slice(0,10);
+                        const ext = mime.includes('mp4') ? 'mp4' : 'webm';
+                        const filename = `Pine_Forest_Mix_${dateStr}.${ext}`;
+
+                        // Auto-trigger browser file download!
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = filename;
+                        a.click();
+                        
+                        logMsg(`Success! Saved your custom live performance master: "${filename}"`);
+                        
+                        // Clean up Web Audio connections
+                        try { masterGain.disconnect(recordDestination); } catch(e){}
+                        recordDestination = null;
+                        mediaRecorder = null;
+                    };
+
+                    mediaRecorder.start();
+
+                    // Start timer clock
+                    recordTimer = setInterval(() => {
+                        recordSeconds++;
+                        const mins = Math.floor(recordSeconds / 60).toString().padStart(2, '0');
+                        const secs = (recordSeconds % 60).toString().padStart(2, '0');
+                        recordBtnText.innerText = `Recording (${mins}:${secs}) - Stop`;
+                    }, 1000);
+
+                } catch (e) {
+                    logMsg("Failed to start MediaRecorder: " + e.message, true);
+                    isRecording = false;
+                }
             }
         }
 
@@ -707,7 +894,7 @@
             if (isDrifting) {
                 isDrifting = false;
                 driftBtn.classList.remove('drift-glowing');
-                driftBtnText.innerText = "Enable Auto-Drift Remixing";
+                driftBtnText.innerText = "Enable Auto-Drift";
                 clearInterval(driftInterval);
                 logMsg("Auto-Drift disabled. Custom sliders are active.");
             } else {
@@ -716,6 +903,11 @@
                 driftBtnText.innerText = "Auto-Drifting Active!";
                 runAutoDrift();
             }
+        });
+
+        // Live Record Button Click Listener
+        recordBtn.addEventListener('click', () => {
+            toggleRecording();
         });
 
         // Volume Sliders Bindings
