@@ -82,17 +82,49 @@
         <!-- The 3 Dynamic Slots + Synth Pad -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             
-            <!-- SLOT 0: 432Hz Synth Pad -->
+            <!-- SLOT 0: Customizable Synth Pad -->
             <div class="slot-card rounded-2xl p-6 flex flex-col justify-between space-y-4 slot-active">
                 <div>
                     <div class="flex justify-between items-start">
-                        <span class="text-[10px] tracking-widest text-emerald-400 uppercase font-bold">Built-In Pad</span>
-                        <span class="text-xs text-stone-500">A=432Hz</span>
+                        <span class="text-[10px] tracking-widest text-emerald-400 uppercase font-bold">Acoustic Floor</span>
+                        <span id="tuning-label" class="text-xs text-stone-500">432Hz</span>
                     </div>
-                    <h3 class="text-lg font-normal text-stone-200 mt-2">Harmonic Velvet Pad</h3>
-                    <p class="text-xs text-stone-400 font-light mt-1">Generates G-Major background swells in real-time to bind your files together.</p>
+                    <h3 class="text-lg font-normal text-stone-200 mt-2">Harmonic Floor Swells</h3>
+                    <p class="text-xs text-stone-400 font-light mt-1 mb-3">Generates procedural background pads in real-time to bind your soundstage together.</p>
+
+                    <!-- Synth Control Inputs -->
+                    <div class="grid grid-cols-1 gap-2 mt-2">
+                        <!-- Timbre Select -->
+                        <div class="flex justify-between items-center text-xs text-stone-400 bg-stone-950/40 p-2 rounded-xl border border-white/5">
+                            <span>Pad Timbre</span>
+                            <select id="synth-timbre" class="bg-stone-900 border border-white/10 rounded-lg p-1 text-[11px] text-stone-300 focus:outline-none">
+                                <option value="sine">Velvet Sine (Warm)</option>
+                                <option value="triangle">Breathy Pipe (Triangle)</option>
+                                <option value="sawtooth">Analog Brass (Filtered Saw)</option>
+                            </select>
+                        </div>
+
+                        <!-- Solfeggio / Tuning Select -->
+                        <div class="flex justify-between items-center text-xs text-stone-400 bg-stone-950/40 p-2 rounded-xl border border-white/5">
+                            <span>Base Tuning</span>
+                            <select id="synth-tuning" class="bg-stone-900 border border-white/10 rounded-lg p-1 text-[11px] text-stone-300 focus:outline-none">
+                                <option value="432">432 Hz (Cosmic Harmony)</option>
+                                <option value="528">528 Hz (Transformation)</option>
+                                <option value="440">440 Hz (Standard Concert)</option>
+                            </select>
+                        </div>
+
+                        <!-- Motion Mode Select -->
+                        <div class="flex justify-between items-center text-xs text-stone-400 bg-stone-950/40 p-2 rounded-xl border border-white/5">
+                            <span>Movement Mode</span>
+                            <select id="synth-movement" class="bg-stone-900 border border-white/10 rounded-lg p-1 text-[11px] text-stone-300 focus:outline-none">
+                                <option value="swells">Serene Swells (Chords)</option>
+                                <option value="drone">Static Drone (G-Root)</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
-                <div class="space-y-2 mt-auto">
+                <div class="space-y-2 mt-auto pt-2">
                     <div class="flex justify-between text-xs text-stone-400">
                         <span>Pad Level</span>
                         <span id="val-synth">60%</span>
@@ -284,6 +316,11 @@
         const harmonizerBadge = document.getElementById('harmonizer-badge');
         const harmonizerText = document.getElementById('harmonizer-text');
         const harmonizerDot = document.getElementById('harmonizer-dot');
+
+        const synthTimbre = document.getElementById('synth-timbre');
+        const synthTuning = document.getElementById('synth-tuning');
+        const synthMovement = document.getElementById('synth-movement');
+        const tuningLabel = document.getElementById('tuning-label');
 
         // Initialize slots selectors
         slots.forEach(slot => {
@@ -494,11 +531,11 @@
                     const isBass = index === 0;
 
                     const oscL = audioCtx.createOscillator();
-                    oscL.type = 'sine';
+                    oscL.type = synthTimbre.value;
                     oscL.frequency.setValueAtTime(freq - detuneHz, now);
 
                     const oscR = audioCtx.createOscillator();
-                    oscR.type = 'sine';
+                    oscR.type = synthTimbre.value;
                     oscR.frequency.setValueAtTime(freq + detuneHz, now);
 
                     const panL = createSafePanner(audioCtx, -0.6, now);
@@ -604,7 +641,12 @@
         // Step through progression
         function stepProgression() {
             try {
-                currentChordIndex = (currentChordIndex + 1) % chords.length;
+                const movementMode = synthMovement ? synthMovement.value : 'swells';
+                if (movementMode === 'drone') {
+                    currentChordIndex = 0; // Lock on G-Root chord
+                } else {
+                    currentChordIndex = (currentChordIndex + 1) % chords.length;
+                }
                 const currentChord = chords[currentChordIndex];
                 
                 // Play background pad chord
@@ -927,6 +969,29 @@
                     slot.gainNode.gain.setTargetAtTime(val / 100, audioCtx.currentTime, 0.08);
                 }
             });
+        });
+
+        // Event listeners for custom synth floor controls
+        synthTuning.addEventListener('change', () => {
+            referencePitch = parseFloat(synthTuning.value);
+            tuningLabel.innerText = `${referencePitch}Hz`;
+            logMsg(`Master reference pitch adjusted to A=${referencePitch}Hz (Solfeggio tuning)`);
+            
+            // If playing, let's update any active oscillators' pitches
+            if (isPlaying && audioCtx) {
+                logMsg("Pitch adjustments will cascade on the next harmonic cycle.");
+            }
+        });
+
+        synthTimbre.addEventListener('change', () => {
+            logMsg(`Synthesizer waveform timbre set to: ${synthTimbre.value.toUpperCase()}`);
+        });
+
+        synthMovement.addEventListener('change', () => {
+            logMsg(`Movement mode set to: ${synthMovement.value === 'drone' ? 'STATIC G-ROOT DRONE' : 'CHORD PROGRESSION SWELLS'}`);
+            if (isPlaying && synthMovement.value === 'drone') {
+                logMsg("Harmonizer: Locking pitch tracking to G-Root.");
+            }
         });
     </script>
 </body>
