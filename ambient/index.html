@@ -369,11 +369,17 @@
                 <div id="license-bar" class="rounded-xl border border-white/5 bg-stone-950/40 p-3 text-xs space-y-2">
                     <div class="flex items-center justify-between gap-2">
                         <span id="license-status" class="text-stone-400">Free version · mix &amp; listen freely · exports capped at 60s</span>
-                        <button id="license-toggle" class="text-emerald-400 hover:text-emerald-300 underline underline-offset-2 shrink-0">Have a key?</button>
+                        <div class="flex items-center gap-3 shrink-0">
+                            <a id="license-buy" href="#" target="_blank" rel="noopener" class="text-emerald-400 hover:text-emerald-300 font-semibold whitespace-nowrap">Get the full version →</a>
+                            <button id="license-toggle" class="text-stone-400 hover:text-stone-200 underline underline-offset-2 whitespace-nowrap">Have a key?</button>
+                        </div>
                     </div>
-                    <div id="license-unlock-row" class="hidden flex gap-2">
-                        <input id="license-key-input" type="text" placeholder="Paste your license key" class="flex-1 bg-stone-900 border border-white/10 rounded-lg p-2 text-[11px] text-stone-200 focus:outline-none focus:border-emerald-500/40">
-                        <button id="license-unlock-btn" class="px-4 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-semibold shrink-0">Unlock</button>
+                    <div id="license-unlock-row" class="hidden space-y-1.5">
+                        <div class="flex gap-2">
+                            <input id="license-key-input" type="text" placeholder="Paste your license key" class="flex-1 bg-stone-900 border border-white/10 rounded-lg p-2 text-[11px] text-stone-200 focus:outline-none focus:border-emerald-500/40">
+                            <button id="license-unlock-btn" class="px-4 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-semibold shrink-0">Unlock</button>
+                        </div>
+                        <p class="text-[10px] text-stone-500">Your key is in your purchase receipt. No key yet? <a id="license-buy-inline" href="#" target="_blank" rel="noopener" class="text-emerald-400 hover:text-emerald-300 underline underline-offset-2">Buy the full version</a>.</p>
                     </div>
                     <div id="license-msg" class="text-[10px] min-h-[12px]"></div>
                 </div>
@@ -2124,8 +2130,12 @@
         ===================================================================== */
         const LICENSE_STORAGE_KEY = 'ambientStudioLicense';
         const LICENSE_VERIFY_URL = '/.netlify/functions/verify-license';
+        // Where people buy the full version — set this to your Gumroad product URL.
+        const PURCHASE_URL = 'https://theaborch.gumroad.com/l/ambientstudio';
 
         const licenseStatus = document.getElementById('license-status');
+        const licenseBuy = document.getElementById('license-buy');
+        const licenseBuyInline = document.getElementById('license-buy-inline');
         const licenseToggle = document.getElementById('license-toggle');
         const licenseUnlockRow = document.getElementById('license-unlock-row');
         const licenseKeyInput = document.getElementById('license-key-input');
@@ -2144,11 +2154,13 @@
                 licenseStatus.textContent = '✓ Full version unlocked — export any length, royalty-free';
                 licenseStatus.className = 'text-emerald-400';
                 licenseToggle.classList.add('hidden');
+                licenseBuy.classList.add('hidden');
                 licenseUnlockRow.classList.add('hidden');
             } else {
                 licenseStatus.textContent = 'Free version · mix & listen freely · exports capped at 60s';
                 licenseStatus.className = 'text-stone-400';
                 licenseToggle.classList.remove('hidden');
+                licenseBuy.classList.remove('hidden');
             }
         }
 
@@ -2172,6 +2184,10 @@
             if (!resp.ok) throw new Error('Licensing server unavailable');
             return await resp.json(); // { valid: bool, message, email? }
         }
+
+        // Point the buy links at the purchase page.
+        if (licenseBuy) licenseBuy.href = PURCHASE_URL;
+        if (licenseBuyInline) licenseBuyInline.href = PURCHASE_URL;
 
         licenseToggle.addEventListener('click', () => {
             licenseUnlockRow.classList.toggle('hidden');
