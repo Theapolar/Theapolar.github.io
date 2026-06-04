@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pine Forest - Intelligent Ambient Remixer</title>
+    <title>Ambient Soundscape Studio — Meditation &amp; Ambient Music Maker | PineDesign Studios</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -40,10 +40,10 @@
         
         <!-- Header -->
         <div class="text-center space-y-3">
-            <span class="text-xs tracking-[0.3em] text-emerald-500 uppercase font-semibold">PineDesign Studio</span>
-            <h1 class="text-4xl font-light tracking-wide text-stone-100">Ambient Studio Remixer</h1>
+            <span class="text-xs tracking-[0.3em] text-emerald-500 uppercase font-semibold">PineDesign Studios</span>
+            <h1 class="text-4xl font-light tracking-wide text-stone-100">Ambient Soundscape Studio</h1>
             <p class="text-sm text-stone-400 font-light max-w-md mx-auto">
-                Mix your pristine Norwegian recordings with real-time 432Hz ambient pads, perform live swells, and export your custom creations.
+                Build endless meditation &amp; ambient soundscapes — layer nature and ASMR textures over self-tuning 432Hz pads, add binaural beats, gentle pulses and bells, then export royalty-free tracks at any session length.
             </p>
         </div>
 
@@ -368,7 +368,7 @@
                 <!-- License / unlock bar -->
                 <div id="license-bar" class="rounded-xl border border-white/5 bg-stone-950/40 p-3 text-xs space-y-2">
                     <div class="flex items-center justify-between gap-2">
-                        <span id="license-status" class="text-stone-400">Free version · exports limited to 60s</span>
+                        <span id="license-status" class="text-stone-400">Free version · mix &amp; listen freely · exports capped at 60s</span>
                         <button id="license-toggle" class="text-emerald-400 hover:text-emerald-300 underline underline-offset-2 shrink-0">Have a key?</button>
                     </div>
                     <div id="license-unlock-row" class="hidden flex gap-2">
@@ -1605,7 +1605,7 @@
             let duration = parseInt(document.getElementById('render-length').value, 10);
             if (!isLicensed && duration > 60) {
                 duration = 60;
-                logMsg('Free version: exports are limited to 60s. Unlock the full version for longer renders.', true);
+                logMsg('Free version: exports are capped at 60s. Unlock the full version for any-length, royalty-free renders.', true);
             }
             const format = document.getElementById('render-format').value;
             const fadeIn = Math.max(0, parseFloat(document.getElementById('render-fadein').value) || 0);
@@ -2141,12 +2141,12 @@
             if (!isLicensed && renderLengthSelect.value !== '60') renderLengthSelect.value = '60';
 
             if (isLicensed) {
-                licenseStatus.textContent = '✓ Full version unlocked — all export lengths available';
+                licenseStatus.textContent = '✓ Full version unlocked — export any length, royalty-free';
                 licenseStatus.className = 'text-emerald-400';
                 licenseToggle.classList.add('hidden');
                 licenseUnlockRow.classList.add('hidden');
             } else {
-                licenseStatus.textContent = 'Free version · exports limited to 60s';
+                licenseStatus.textContent = 'Free version · mix & listen freely · exports capped at 60s';
                 licenseStatus.className = 'text-stone-400';
                 licenseToggle.classList.remove('hidden');
             }
