@@ -3,52 +3,174 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <title>Ambient Soundscape Studio — Meditation &amp; Ambient Music Maker | PineDesign Studios</title>
+
+    <!-- Google Search Console verification -->
+    <meta name="google-site-verification" content="gKFivXZ5k2Wo7fNuuaycfQneW7yt_XdMACfgWKMR6QQ" />
+
+    <!-- SEO -->
+    <meta name="description" content="Build endless meditation & ambient soundscapes in your browser — layer nature and ASMR textures over self-tuning 432 Hz pads, add binaural beats, gentle pulses and bells, then export royalty-free tracks at any length." />
+    <meta name="keywords" content="ambient music maker, meditation sound generator, soundscape generator, binaural beats, isochronic tones, 432 Hz, white noise, sleep sounds, royalty-free ambient, focus music, online ambient studio" />
+    <meta name="author" content="PineDesign Studios" />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <meta name="theme-color" content="#efeae0" />
+    <link rel="canonical" href="https://pinedesignstudio.netlify.app/" />
+
+    <!-- Open Graph / social link previews -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="PineDesign Studios" />
+    <meta property="og:title" content="Ambient Soundscape Studio — Meditation & Ambient Music Maker" />
+    <meta property="og:description" content="Layer nature and ASMR textures over self-tuning 432 Hz pads, add binaural beats and gentle bells, then export royalty-free ambient tracks at any length. Runs in your browser." />
+    <meta property="og:url" content="https://pinedesignstudio.netlify.app/" />
+    <meta property="og:image" content="https://pinedesignstudio.netlify.app/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="628" />
+    <meta property="og:image:alt" content="Ambient Soundscape Studio" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content="https://pinedesignstudio.netlify.app/og-image.png" />
+    <meta name="twitter:title" content="Ambient Soundscape Studio — Meditation & Ambient Music Maker" />
+    <meta name="twitter:description" content="Build endless meditation & ambient soundscapes in your browser and export royalty-free tracks at any length." />
+
+    <!-- Structured data: helps search engines and AI agents understand the app -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "Ambient Soundscape Studio",
+      "applicationCategory": "MultimediaApplication",
+      "operatingSystem": "Any (runs in a web browser)",
+      "url": "https://pinedesignstudio.netlify.app/",
+      "description": "A browser-based studio for building meditation and ambient soundscapes: layer nature and ASMR textures over self-tuning 432 Hz pads, add binaural beats, isochronic tones, gentle pulses and bells, then export royalty-free tracks at any length. Free to try (60-second export); a one-time license unlocks full-length exports.",
+      "creator": { "@type": "Organization", "name": "PineDesign Studios" },
+      "featureList": [
+        "Layer nature, ASMR texture, and tonal sounds",
+        "Self-tuning 432 Hz / 528 Hz ambient pads with an auto-harmonizer",
+        "Binaural beats and isochronic tones across brainwave bands",
+        "Gentle pulses and interval bells",
+        "Export royalty-free WAV or MP3 at any session length"
+      ]
+    }
+    </script>
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="studio-ui.css" />
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Instrument+Serif:ital@0;1&display=swap');
         body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background: radial-gradient(circle at center, #0f1c14 0%, #060907 100%);
+            font-family: 'DM Sans', sans-serif;
         }
+        /* Clickable sound lists + tag chips + segmented toggles
+           (replacing the old dropdowns) */
+        .lib-list { display:flex; flex-direction:column; gap:var(--s1); max-height:11rem; overflow-y:auto; margin-bottom:var(--s3); padding-right:var(--s1); }
+        .lib-list:empty { display:none; }
+        .lib-item { text-align:left; font-size:var(--t-label); color:var(--ink-soft); background:var(--raised); border:1px solid var(--line); border-radius:var(--r-sm); padding:7px 10px; cursor:pointer; transition:background .18s ease, border-color .18s ease, color .18s ease; }
+        .lib-item:hover { background:var(--card); border-color:var(--line-strong); }
+        .lib-item-active { background:var(--moss-tint); border-color:var(--moss); color:var(--ink); }
+        .chip { font-size:var(--t-label); letter-spacing:.03em; text-transform:capitalize; color:var(--muted); background:var(--raised); border:1px solid var(--line); border-radius:var(--r-pill); padding:3px 11px; cursor:pointer; transition:background .18s ease, border-color .18s ease, color .18s ease; }
+        .chip:hover { color:var(--ink); border-color:var(--line-strong); }
+        .chip-active { background:var(--moss-tint); border-color:var(--moss); color:var(--ink); }
+        .seg { display:flex; flex-wrap:wrap; gap:var(--s1); }
+        .seg-btn { font-size:var(--t-label); color:var(--ink-soft); background:var(--raised); border:1px solid var(--line); border-radius:var(--r-sm); padding:6px 10px; cursor:pointer; transition:background .18s ease, border-color .18s ease, color .18s ease; }
+        .seg-btn:hover { border-color:var(--line-strong); }
+        .seg-btn-active { background:var(--moss-tint); border-color:var(--moss); color:var(--ink); }
+        /* background-color, not the shorthand — the grain image must survive. */
         .slot-card {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            background-color: var(--card);
+            background-image: var(--grain-soft);
+            border: 1px solid var(--line);
+            transition: border-color .22s ease, background-color .22s ease;
         }
+        /* A layer with sound loaded is "live" — the one job moss has. */
         .slot-active {
-            border-color: rgba(16, 185, 129, 0.3);
-            background: rgba(16, 185, 129, 0.03);
-            box-shadow: 0 0 30px rgba(16, 185, 129, 0.05);
+            border-color: var(--moss);
+            background-color: var(--raised);
         }
         .drift-glowing {
-            box-shadow: 0 0 20px 2px rgba(16, 185, 129, 0.2);
-            animation: pulse-glow 3s infinite ease-in-out;
-        }
-        @keyframes pulse-glow {
-            0%, 100% { box-shadow: 0 0 20px 2px rgba(16, 185, 129, 0.2); }
-            50% { box-shadow: 0 0 35px 8px rgba(16, 185, 129, 0.4); }
+            border-color: var(--moss) !important;
+            background-color: var(--moss-tint) !important;
         }
     </style>
 </head>
-<body class="flex flex-col items-center justify-center min-h-screen text-slate-200 py-12 px-4 select-none">
+<body class="flex flex-col items-center justify-start min-h-screen text-slate-200 py-12 px-4 select-none">
 
     <!-- App Container -->
-    <div class="max-w-2xl w-full flex flex-col space-y-10 z-10">
+    <div class="studio-shell w-full flex flex-col space-y-10 z-10">
         
         <!-- Header -->
-        <div class="text-center space-y-3">
-            <span class="text-xs tracking-[0.3em] text-emerald-500 uppercase font-semibold">PineDesign Studios</span>
-            <h1 class="text-4xl font-light tracking-wide text-stone-100">Ambient Soundscape Studio</h1>
-            <p class="text-sm text-stone-400 font-light max-w-md mx-auto">
-                Build endless meditation &amp; ambient soundscapes — layer nature and ASMR textures over self-tuning 432Hz pads, add binaural beats, gentle pulses and bells, then export royalty-free tracks at any session length.
-            </p>
+        <div id="app-header">
+            <div class="header-copy">
+                <span class="brand-mark">PineDesign <i aria-hidden="true"></i> Ambient Studio</span>
+                <h1>Create your own soundscape.</h1>
+            </div>
+            <div class="header-note">
+                <span class="header-note-line" aria-hidden="true"></span>
+                <p>Mix and customize meditation or ambient soundscapes with field recordings, music, gentle tones, and optional narration.</p>
+            </div>
         </div>
 
+        <!-- Outcome-first session setup. The existing studio remains available below. -->
+        <section id="session-setup" class="session-setup slot-card rounded-3xl p-6 sm:p-8" aria-labelledby="session-setup-title">
+            <div class="flex items-start justify-between gap-5 mb-7">
+                <div>
+                    <span class="eyebrow">New session</span>
+                    <h2 id="session-setup-title" class="text-2xl text-stone-100 font-light mt-2">Where would you like to begin?</h2>
+                    <p class="text-sm text-stone-400 mt-2">Begin with a quiet starting mix. Every detail remains yours to shape.</p>
+                </div>
+                <span class="step-badge">1 minute setup</span>
+            </div>
+
+            <fieldset class="setup-group">
+                <legend>Session type</legend>
+                <div class="choice-grid choice-grid-wide" data-choice-group="session-type">
+                    <button type="button" class="setup-choice is-selected" data-value="guided" aria-pressed="true"><span>Guided meditation</span><small>Voice, music and automatic ducking</small></button>
+                    <button type="button" class="setup-choice" data-value="sleep" aria-pressed="false"><span>Sleep journey</span><small>Deep, slow and softly evolving</small></button>
+                    <button type="button" class="setup-choice" data-value="breathwork" aria-pressed="false"><span>Breathwork</span><small>Grounded with a gentle pulse</small></button>
+                    <button type="button" class="setup-choice" data-value="yoga" aria-pressed="false"><span>Yoga nidra</span><small>Spacious, warm and immersive</small></button>
+                    <button type="button" class="setup-choice" data-value="ambient" aria-pressed="false"><span>Ambient background</span><small>Music without narration</small></button>
+                </div>
+            </fieldset>
+
+            <div class="setup-columns">
+                <fieldset class="setup-group">
+                    <legend>Length</legend>
+                    <div class="choice-grid" data-choice-group="session-length">
+                        <button type="button" class="setup-choice compact" data-value="300" aria-pressed="false"><span>5 min</span></button>
+                        <button type="button" class="setup-choice compact is-selected" data-value="600" aria-pressed="true"><span>10 min</span></button>
+                        <button type="button" class="setup-choice compact" data-value="1200" aria-pressed="false"><span>20 min</span></button>
+                        <button type="button" class="setup-choice compact" data-value="1800" aria-pressed="false"><span>30 min</span></button>
+                    </div>
+                </fieldset>
+                <fieldset class="setup-group">
+                    <legend>Feeling</legend>
+                    <div class="choice-grid" data-choice-group="session-mood">
+                        <button type="button" class="setup-choice compact is-selected" data-value="grounded" aria-pressed="true"><span>Grounded</span></button>
+                        <button type="button" class="setup-choice compact" data-value="deep" aria-pressed="false"><span>Deep</span></button>
+                        <button type="button" class="setup-choice compact" data-value="ethereal" aria-pressed="false"><span>Ethereal</span></button>
+                        <button type="button" class="setup-choice compact" data-value="hopeful" aria-pressed="false"><span>Hopeful</span></button>
+                    </div>
+                </fieldset>
+            </div>
+
+            <div class="setup-actions">
+                <button id="create-session-btn" type="button" class="primary-action">Create my starting soundscape <span aria-hidden="true">→</span></button>
+                <button id="skip-setup-btn" type="button" class="quiet-action">Open the full studio</button>
+            </div>
+        </section>
+
+        <div id="studio-workspace" class="studio-workspace" hidden>
+            <div class="workspace-heading">
+                <div>
+                    <span class="eyebrow">Your session</span>
+                    <h2 id="workspace-title" class="text-2xl text-stone-100 font-light mt-1">Guided meditation · 10 minutes</h2>
+                </div>
+                <button id="change-session-btn" type="button" class="quiet-action">Change setup</button>
+            </div>
+
         <!-- Master Play and Intelligent Drift Buttons -->
-        <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+        <div id="studio-transport" class="flex flex-col sm:flex-row items-center justify-center gap-4">
             <!-- Master Play Button -->
             <button id="master-play" class="w-full sm:w-auto px-8 py-4 rounded-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-semibold tracking-wide flex items-center justify-center gap-3 shadow-lg transition-all duration-300 hover:scale-102 active:scale-98">
                 <svg id="play-icon" class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
@@ -57,8 +179,8 @@
             </button>
 
             <!-- Auto-Drift Mode Button -->
-            <button id="drift-btn" class="w-full sm:w-auto px-8 py-4 rounded-full border border-emerald-500/30 bg-emerald-950/20 text-emerald-400 font-medium tracking-wide flex items-center justify-center gap-3 transition-all duration-300 hover:bg-emerald-950/40 hover:border-emerald-500/50">
-                <svg class="w-5 h-5 fill-none stroke-current" stroke-width="2" viewBox="0 0 24 24">
+            <button id="drift-btn" class="px-5 py-2.5 rounded-full border border-emerald-500/30 bg-emerald-950/20 text-emerald-400 text-sm font-medium tracking-wide flex items-center justify-center gap-2 transition-all duration-300 hover:bg-emerald-950/40 hover:border-emerald-500/50">
+                <svg class="w-4 h-4 fill-none stroke-current" stroke-width="2" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 12c0-1.232-.046-2.453-.138-3.662a4.006 4.006 0 00-3.7-3.7 48.656 48.656 0 00-7.324 0 4.006 4.006 0 00-3.7 3.7c-.017.22-.032.441-.046.662M19.5 12l3-3m-3 3l-3-3M4.5 12l-3 3m3-3l3 3m1.5-6.662a48.524 48.524 0 017.324 0M5.138 15.662a4.006 4.006 0 003.7 3.7 48.656 48.656 0 007.324 0 4.006 4.006 0 003.7-3.7m-14.648 0l-3-3m3 3l3-3" />
                 </svg>
                 <span id="drift-btn-text">Enable Auto-Drift</span>
@@ -67,32 +189,30 @@
         </div>
 
         <!-- Surrender & Shuffle -->
-        <div class="flex justify-center -mt-4">
-            <button id="shuffle-btn" class="px-7 py-3 rounded-full bg-gradient-to-r from-emerald-600/80 to-teal-600/80 hover:from-emerald-500 hover:to-teal-500 text-white font-medium tracking-wide flex items-center justify-center gap-2.5 shadow-lg transition-all duration-300 hover:scale-105 active:scale-95">
-                <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z"/></svg>
-                <span>Surrender &amp; Shuffle</span>
+        <div id="studio-shuffle" class="flex justify-center -mt-4">
+            <button id="shuffle-btn" class="px-5 py-2.5 rounded-full border border-emerald-500/30 bg-emerald-950/20 text-emerald-400 text-sm font-medium tracking-wide flex items-center justify-center gap-2 transition-all duration-300 hover:bg-emerald-950/40 hover:border-emerald-500/50" title="Randomize every unlocked layer and start playing">
+                <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M10.59 9.17L5.41 4 4 5.41l5.17 5.17 1.42-1.41zM14.5 4l2.04 2.04L4 18.59 5.41 20 17.96 7.46 20 9.5V4h-5.5zm.33 9.41l-1.41 1.41 3.13 3.13L14.5 20H20v-5.5l-2.04 2.04-3.13-3.13z"/></svg>
+                <span>Shuffle all sounds</span>
             </button>
         </div>
 
         <!-- The 3 Dynamic Slots + Synth Pad -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div id="soundscape-layers" class="grid grid-cols-1 md:grid-cols-2 gap-6">
             
             <!-- SLOT 0: Customizable Synth Pad -->
-            <div class="slot-card rounded-2xl p-6 flex flex-col justify-between space-y-4 slot-active">
+            <div id="card-synth" class="slot-card rounded-2xl p-6 flex flex-col justify-between space-y-4 slot-active">
                 <div>
-                    <div class="flex justify-between items-start">
-                        <span class="text-[10px] tracking-widest text-emerald-400 uppercase font-bold">Acoustic Floor</span>
+                    <div class="flex justify-between items-center mb-3">
+                        <h3 class="card-title">Background Pad</h3>
                         <span id="tuning-label" class="text-xs text-stone-500">432Hz</span>
                     </div>
-                    <h3 class="text-lg font-normal text-stone-200 mt-2">Harmonic Floor Swells</h3>
-                    <p class="text-xs text-stone-400 font-light mt-1 mb-3">Generates procedural background pads in real-time to bind your soundstage together.</p>
 
                     <!-- Synth Control Inputs -->
-                    <div class="grid grid-cols-1 gap-2 mt-2">
+                    <div class="field-list">
                         <!-- Timbre Select -->
-                        <div class="flex justify-between items-center text-xs text-stone-400 bg-stone-950/40 p-2 rounded-xl border border-white/5">
+                        <div class="field-row">
                             <span>Pad Timbre</span>
-                            <select id="synth-timbre" class="bg-stone-900 border border-white/10 rounded-lg p-1 text-[11px] text-stone-300 focus:outline-none">
+                            <select id="synth-timbre">
                                 <option value="sine">Velvet Sine (Warm)</option>
                                 <option value="triangle">Breathy Pipe (Triangle)</option>
                                 <option value="sawtooth">Analog Brass (Filtered Saw)</option>
@@ -100,9 +220,9 @@
                         </div>
 
                         <!-- Solfeggio / Tuning Select -->
-                        <div class="flex justify-between items-center text-xs text-stone-400 bg-stone-950/40 p-2 rounded-xl border border-white/5">
+                        <div class="field-row">
                             <span>Base Tuning</span>
-                            <select id="synth-tuning" class="bg-stone-900 border border-white/10 rounded-lg p-1 text-[11px] text-stone-300 focus:outline-none">
+                            <select id="synth-tuning">
                                 <option value="432">432 Hz (Cosmic Harmony)</option>
                                 <option value="528">528 Hz (Transformation)</option>
                                 <option value="440">440 Hz (Standard Concert)</option>
@@ -110,9 +230,9 @@
                         </div>
 
                         <!-- Motion Mode Select -->
-                        <div class="flex justify-between items-center text-xs text-stone-400 bg-stone-950/40 p-2 rounded-xl border border-white/5">
+                        <div class="field-row">
                             <span>Movement Mode</span>
-                            <select id="synth-movement" class="bg-stone-900 border border-white/10 rounded-lg p-1 text-[11px] text-stone-300 focus:outline-none">
+                            <select id="synth-movement">
                                 <option value="deepbass" selected>Deep Bass Swells (Warm)</option>
                                 <option value="swells">Serene Swells (Chords)</option>
                                 <option value="drone">Static Drone (G-Root)</option>
@@ -125,29 +245,26 @@
                         <span>Pad Level</span>
                         <span id="val-synth">45%</span>
                     </div>
-                    <input id="vol-synth" type="range" min="0" max="100" value="45" class="w-full h-1 rounded-lg bg-stone-800 accent-emerald-500 outline-none cursor-pointer">
+                    <input id="vol-synth" type="range" min="0" max="100" value="45">
                 </div>
             </div>
 
             <!-- SLOT 1: Grounding Layer -->
             <div id="card-1" class="slot-card rounded-2xl p-6 flex flex-col justify-between space-y-4">
                 <div>
-                    <div class="flex justify-between items-start">
-                        <span class="text-[10px] tracking-widest text-emerald-400 uppercase font-medium">Slot A: Grounding</span>
+                    <div class="flex justify-between items-center mb-3">
+                        <h3 class="card-title">Nature Loop</h3>
                         <div class="flex items-center gap-2">
-                            <button id="lock-1" class="text-stone-600 hover:text-emerald-400 transition-colors text-xs leading-none" title="Lock this layer so Shuffle keeps it">🔓</button>
+                            <button id="lock-1" class="text-stone-600 hover:text-emerald-400 transition-colors text-xs leading-none" title="Lock this layer so Shuffle keeps it" aria-label="Lock this layer so Shuffle keeps it">🔓</button>
                             <span id="status-1" class="text-[10px] text-stone-500">Empty</span>
                         </div>
                     </div>
-                    <h3 class="text-lg font-normal text-stone-200 mt-2">Nature Loop</h3>
-                    <p class="text-xs text-stone-400 font-light mt-1 mb-3">Choose from your library or drop your own loop:</p>
-                    
+
                     <!-- Sound Library Dropdown -->
-                    <select id="library-select-1" class="bg-stone-900/80 border border-white/10 rounded-xl p-2.5 text-xs text-stone-300 w-full mb-3 focus:outline-none focus:border-emerald-500/40">
+                    <select id="library-select-1" class="hidden">
                         <option value="">[ Select Grounding Sound... ]</option>
                     </select>
-
-                    <span class="text-[10px] text-stone-500 block text-center mb-1">- or import local file -</span>
+                    <div id="library-list-1" class="lib-list"></div>
 
                     <!-- File Input -->
                     <label class="block border border-dashed border-stone-700 hover:border-emerald-500/40 rounded-xl p-2.5 text-center cursor-pointer transition-colors duration-300">
@@ -160,29 +277,26 @@
                         <span>Layer Level</span>
                         <span id="val-1">50%</span>
                     </div>
-                    <input id="vol-1" type="range" min="0" max="100" value="50" class="w-full h-1 rounded-lg bg-stone-800 accent-emerald-500 outline-none cursor-pointer">
+                    <input id="vol-1" type="range" min="0" max="100" value="50">
                 </div>
             </div>
 
             <!-- SLOT 2: Ambient Layer (Texture) -->
             <div id="card-2" class="slot-card rounded-2xl p-6 flex flex-col justify-between space-y-4">
                 <div>
-                    <div class="flex justify-between items-start">
-                        <span class="text-[10px] tracking-widest text-emerald-400 uppercase font-medium">Slot B: Texture</span>
+                    <div class="flex justify-between items-center mb-3">
+                        <h3 class="card-title">Organic Texture</h3>
                         <div class="flex items-center gap-2">
-                            <button id="lock-2" class="text-stone-600 hover:text-emerald-400 transition-colors text-xs leading-none" title="Lock this layer so Shuffle keeps it">🔓</button>
+                            <button id="lock-2" class="text-stone-600 hover:text-emerald-400 transition-colors text-xs leading-none" title="Lock this layer so Shuffle keeps it" aria-label="Lock this layer so Shuffle keeps it">🔓</button>
                             <span id="status-2" class="text-[10px] text-stone-500">Empty</span>
                         </div>
                     </div>
-                    <h3 class="text-lg font-normal text-stone-200 mt-2">Organic Texture</h3>
-                    <p class="text-xs text-stone-400 font-light mt-1 mb-3">Choose from your library or drop your own loop:</p>
-                    
+
                     <!-- Sound Library Dropdown -->
-                    <select id="library-select-2" class="bg-stone-900/80 border border-white/10 rounded-xl p-2.5 text-xs text-stone-300 w-full mb-3 focus:outline-none focus:border-emerald-500/40">
+                    <select id="library-select-2" class="hidden">
                         <option value="">[ Select Texture Sound... ]</option>
                     </select>
-
-                    <span class="text-[10px] text-stone-500 block text-center mb-1">- or import local file -</span>
+                    <div id="library-list-2" class="lib-list"></div>
 
                     <!-- File Input -->
                     <label class="block border border-dashed border-stone-700 hover:border-emerald-500/40 rounded-xl p-2.5 text-center cursor-pointer transition-colors duration-300">
@@ -195,39 +309,37 @@
                         <span>Layer Level</span>
                         <span id="val-2">50%</span>
                     </div>
-                    <input id="vol-2" type="range" min="0" max="100" value="50" class="w-full h-1 rounded-lg bg-stone-800 accent-emerald-500 outline-none cursor-pointer">
+                    <input id="vol-2" type="range" min="0" max="100" value="50">
                 </div>
             </div>
 
             <!-- SLOT 3: Harmonic Sparks -->
             <div id="card-3" class="slot-card rounded-2xl p-6 flex flex-col justify-between space-y-4">
                 <div>
-                    <div class="flex justify-between items-start">
-                        <span class="text-[10px] tracking-widest text-emerald-400 uppercase font-bold">Slot C: Sparks</span>
+                    <div class="flex justify-between items-center mb-3">
+                        <h3 class="card-title">Melody Spark</h3>
                         <div class="flex items-center gap-2">
-                            <button id="lock-3" class="text-stone-600 hover:text-emerald-400 transition-colors text-xs leading-none" title="Lock this layer so Shuffle keeps it">🔓</button>
+                            <button id="lock-3" class="text-stone-600 hover:text-emerald-400 transition-colors text-xs leading-none" title="Lock this layer so Shuffle keeps it" aria-label="Lock this layer so Shuffle keeps it">🔓</button>
                             <span id="status-3" class="text-[10px] text-stone-500">Empty</span>
                         </div>
                     </div>
-                    <h3 class="text-lg font-normal text-stone-200 mt-2">Tonal / Melody Spark</h3>
-                    <p class="text-xs text-stone-400 font-light mt-1 mb-3">Tonal samples that follow the chords via the Auto-Harmonizer:</p>
 
                     <!-- Sound Library Dropdown -->
-                    <select id="library-select-3" class="bg-stone-900/80 border border-white/10 rounded-xl p-2.5 text-xs text-stone-300 w-full mb-3 focus:outline-none focus:border-emerald-500/40">
+                    <select id="library-select-3" class="hidden">
                         <option value="">[ Select Melody Spark... ]</option>
                     </select>
+                    <div id="spark-tags" class="seg" style="margin-bottom:8px;"></div>
+                    <div id="library-list-3" class="lib-list"></div>
 
                     <!-- Harmonizer mode -->
-                    <div class="flex justify-between items-center text-xs text-stone-400 bg-stone-950/40 p-2 rounded-xl border border-white/5 mb-1">
+                    <div class="field-row">
                         <span>Harmonizer</span>
-                        <select id="harmonizer-mode" class="bg-stone-900 border border-white/10 rounded-lg p-1 text-[11px] text-stone-300 focus:outline-none">
+                        <select id="harmonizer-mode">
                             <option value="off" selected>Off (natural pitch)</option>
                             <option value="smooth">Smooth (no swoosh)</option>
                             <option value="glide">Glide (tape sweep)</option>
                         </select>
                     </div>
-
-                    <span class="text-[10px] text-stone-500 block text-center mb-1">- or import local file -</span>
 
                     <!-- File Input -->
                     <label class="block border border-dashed border-stone-700 hover:border-emerald-500/40 rounded-xl p-2.5 text-center cursor-pointer transition-colors duration-300">
@@ -246,30 +358,30 @@
                         <span>Layer Level</span>
                         <span id="val-3">50%</span>
                     </div>
-                    <input id="vol-3" type="range" min="0" max="100" value="50" class="w-full h-1 rounded-lg bg-stone-800 accent-emerald-500 outline-none cursor-pointer">
+                    <input id="vol-3" type="range" min="0" max="100" value="50">
                 </div>
             </div>
 
         </div>
 
         <!-- ============ PULSE / SUB-BASS RHYTHM ============ -->
-        <div class="slot-card rounded-2xl p-6 flex flex-col space-y-4">
+        <div id="card-pulse" class="slot-card rounded-2xl p-6 flex flex-col space-y-4">
             <div class="flex justify-between items-start gap-4">
                 <div>
-                    <span class="text-[10px] tracking-widest text-emerald-400 uppercase font-bold">Pulse Engine</span>
-                    <h3 class="text-lg font-normal text-stone-200 mt-2">Warm Sub-Bass Pulse</h3>
-                    <p class="text-xs text-stone-400 font-light mt-1">Slow, deep, chord-locked beats beneath your mix — fully synthesized, so it always stays in tune with the harmony.</p>
+                    <span class="eyebrow">Pulse Engine</span>
+                    <h3 class="card-title mt-2">Warm Sub-Bass Pulse</h3>
+                    <p class="text-xs text-stone-400 font-light mt-1">Slow, deep beats beneath your mix — synthesized, so always in tune.</p>
                 </div>
                 <button id="pulse-toggle" class="shrink-0 px-5 py-2.5 rounded-full border border-emerald-500/30 bg-emerald-950/20 text-emerald-400 text-xs font-semibold tracking-wide hover:bg-emerald-950/40 transition-all">Enable Pulse</button>
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div class="flex flex-col gap-1 text-xs text-stone-400">
                     <span>Tempo (<span id="pulse-tempo-val">60</span> BPM)</span>
-                    <input id="pulse-tempo" type="range" min="40" max="90" value="60" class="w-full h-1 rounded-lg bg-stone-800 accent-emerald-500 outline-none cursor-pointer">
+                    <input id="pulse-tempo" type="range" min="40" max="90" value="60">
                 </div>
                 <div class="flex flex-col gap-1 text-xs text-stone-400">
                     <span>Pattern</span>
-                    <select id="pulse-pattern" class="bg-stone-900 border border-white/10 rounded-lg p-2 text-[11px] text-stone-300 focus:outline-none">
+                    <select id="pulse-pattern">
                         <option value="pulse">Steady Pulse</option>
                         <option value="sparse" selected>Sparse (every 2nd beat)</option>
                         <option value="heartbeat">Heartbeat</option>
@@ -277,26 +389,26 @@
                 </div>
                 <div class="flex flex-col gap-1 text-xs text-stone-400">
                     <span>Level (<span id="pulse-level-val">50</span>%)</span>
-                    <input id="pulse-level" type="range" min="0" max="100" value="50" class="w-full h-1 rounded-lg bg-stone-800 accent-emerald-500 outline-none cursor-pointer">
+                    <input id="pulse-level" type="range" min="0" max="100" value="50">
                 </div>
             </div>
         </div>
 
         <!-- ============ SESSION BELLS ============ -->
-        <div class="slot-card rounded-2xl p-6 flex flex-col space-y-4">
+        <div id="card-bells" class="slot-card rounded-2xl p-6 flex flex-col space-y-4">
             <div>
-                <span class="text-[10px] tracking-widest text-emerald-400 uppercase font-bold">Session Bells</span>
-                <h3 class="text-lg font-normal text-stone-200 mt-2">Bells &amp; Timing</h3>
+                <span class="eyebrow">Session Bells</span>
+                <h3 class="card-title mt-2">Bells &amp; Timing</h3>
                 <p class="text-xs text-stone-400 font-light mt-1">Soft singing-bowl tones to open, mark, and close a session — tuned to your mix.</p>
             </div>
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                <label class="flex items-center justify-between text-xs text-stone-400 bg-stone-950/40 p-2 rounded-xl border border-white/5 cursor-pointer">
+                <label class="field-toggle">
                     <span>Start bell</span>
                     <input id="bell-start" type="checkbox" class="accent-emerald-500 w-4 h-4">
                 </label>
                 <div class="flex flex-col gap-1 text-xs text-stone-400">
                     <span>Interval bell</span>
-                    <select id="bell-interval" class="bg-stone-900 border border-white/10 rounded-lg p-2 text-[11px] text-stone-300 focus:outline-none">
+                    <select id="bell-interval">
                         <option value="0" selected>Off</option>
                         <option value="1">Every 1 min</option>
                         <option value="2">Every 2 min</option>
@@ -305,69 +417,96 @@
                         <option value="10">Every 10 min</option>
                     </select>
                 </div>
-                <label class="flex items-center justify-between text-xs text-stone-400 bg-stone-950/40 p-2 rounded-xl border border-white/5 cursor-pointer">
+                <label class="field-toggle">
                     <span>Ending bell</span>
                     <input id="bell-end" type="checkbox" class="accent-emerald-500 w-4 h-4">
                 </label>
                 <div class="flex flex-col gap-1 text-xs text-stone-400">
-                    <span>Level (<span id="bell-level-val">60</span>%)</span>
-                    <input id="bell-level" type="range" min="0" max="100" value="60" class="w-full h-1 rounded-lg bg-stone-800 accent-emerald-500 outline-none cursor-pointer">
+                    <span>Level (<span id="bell-level-val">40</span>%)</span>
+                    <input id="bell-level" type="range" min="0" max="100" value="40">
                 </div>
             </div>
-            <p class="text-[10px] text-stone-600 leading-relaxed">In the live preview you'll hear the start &amp; interval bells. The <strong>ending bell</strong> rings near the close of your <strong>exported</strong> track (live playback has no fixed end).</p>
+            <p class="text-xs text-stone-500 leading-relaxed">The ending bell rings near the close of your exported track.</p>
         </div>
 
         <!-- ============ BRAINWAVE ENTRAINMENT (BINAURAL / ISOCHRONIC) ============ -->
-        <div class="slot-card rounded-2xl p-6 flex flex-col space-y-4">
+        <div id="card-entrainment" class="slot-card rounded-2xl p-6 flex flex-col space-y-4">
             <div>
-                <span class="text-[10px] tracking-widest text-emerald-400 uppercase font-bold">Entrainment</span>
-                <h3 class="text-lg font-normal text-stone-200 mt-2">Binaural &amp; Isochronic Tones</h3>
+                <span class="eyebrow">Focus &amp; Meditation Tones</span>
+                <h3 class="card-title mt-2">Binaural &amp; Isochronic Tones</h3>
                 <p class="text-xs text-stone-400 font-light mt-1">Subtle pure tones tuned to brainwave rhythms, layered beneath the mix. Many find them deeply settling.</p>
             </div>
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
                 <div class="flex flex-col gap-1 text-xs text-stone-400">
                     <span>Mode</span>
-                    <select id="entrain-mode" class="bg-stone-900 border border-white/10 rounded-lg p-2 text-[11px] text-stone-300 focus:outline-none">
+                    <select id="entrain-mode" class="hidden">
                         <option value="off" selected>Off</option>
                         <option value="binaural">Binaural (headphones)</option>
                         <option value="isochronic">Isochronic (speakers OK)</option>
                     </select>
+                    <div id="entrain-mode-seg" class="seg"></div>
                 </div>
                 <div class="flex flex-col gap-1 text-xs text-stone-400">
                     <span>Brainwave band</span>
-                    <select id="entrain-band" class="bg-stone-900 border border-white/10 rounded-lg p-2 text-[11px] text-stone-300 focus:outline-none">
+                    <select id="entrain-band" class="hidden">
                         <option value="2.5">Delta · Deep sleep (2.5 Hz)</option>
                         <option value="6">Theta · Meditation (6 Hz)</option>
                         <option value="10" selected>Alpha · Relaxed (10 Hz)</option>
-                        <option value="18">Beta · Focus (18 Hz)</option>
+                        <option value="40">Gamma · Clarity (40 Hz)</option>
                     </select>
+                    <div id="entrain-band-seg" class="seg"></div>
                 </div>
                 <div class="flex flex-col gap-1 text-xs text-stone-400">
                     <span>Carrier (<span id="entrain-carrier-val">200</span> Hz)</span>
-                    <input id="entrain-carrier" type="range" min="80" max="400" value="200" class="w-full h-1 rounded-lg bg-stone-800 accent-emerald-500 outline-none cursor-pointer">
+                    <input id="entrain-carrier" type="range" min="80" max="400" value="200">
                 </div>
                 <div class="flex flex-col gap-1 text-xs text-stone-400">
-                    <span>Level (<span id="entrain-level-val">40</span>%)</span>
-                    <input id="entrain-level" type="range" min="0" max="100" value="40" class="w-full h-1 rounded-lg bg-stone-800 accent-emerald-500 outline-none cursor-pointer">
+                    <span>Level (<span id="entrain-level-val">25</span>%)</span>
+                    <input id="entrain-level" type="range" min="0" max="100" value="25">
                 </div>
             </div>
-            <p class="text-[10px] text-stone-600 leading-relaxed">🎧 Binaural beats require headphones (each ear hears a slightly different tone). Isochronic tones pulse a single tone on/off and work on speakers. Keep levels gentle; not a medical treatment.</p>
+            <p class="text-xs text-stone-500 leading-relaxed">🎧 Binaural needs headphones; isochronic works on speakers. Keep levels gentle — not a medical treatment.</p>
+        </div>
+
+        <!-- ============ VOICE-OVER (GUIDED NARRATION) ============ -->
+        <div id="card-narration" class="slot-card rounded-2xl p-6 flex flex-col space-y-4">
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 items-end">
+                <div class="flex flex-col gap-1 text-xs text-stone-400 col-span-2">
+                    <span>Voice track <em class="optional-label">Optional</em></span>
+                    <label class="cursor-pointer">
+                        <input id="voice-file" type="file" accept="audio/*" class="hidden">
+                        <span class="block text-center px-3 py-2 rounded-lg border border-white/10 bg-stone-900 text-[11px] text-stone-300 hover:bg-stone-800 transition-all">Upload voice…</span>
+                    </label>
+                    <span id="voice-status" class="text-[10px] text-stone-500">No narration loaded</span>
+                </div>
+                <div class="flex flex-col gap-1 text-xs text-stone-400">
+                    <span>Voice level (<span id="voice-level-val">90</span>%)</span>
+                    <input id="voice-level" type="range" min="0" max="100" value="90">
+                </div>
+                <div class="flex flex-col gap-1 text-xs text-stone-400">
+                    <span>Music ducks (−<span id="voice-duck-val">55</span>%)</span>
+                    <input id="voice-duck" type="range" min="0" max="90" value="55">
+                </div>
+            </div>
+            <div class="flex items-center gap-3 flex-wrap">
+                <button id="voice-play-btn" class="px-4 py-2 rounded-full border border-white/10 bg-stone-900/60 text-stone-300 text-xs font-medium hover:bg-stone-800 transition-all disabled:opacity-40 disabled:cursor-not-allowed" disabled>▶ Play voice-over</button>
+                <p class="text-xs text-stone-500 leading-relaxed">Previews once over the live mix; in your export it starts after the intro fade.</p>
+            </div>
         </div>
 
         <!-- ============ STUDIO EXPORTS & PRESETS ============ -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div id="studio-exports" class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
             <!-- Render / Export Panel -->
             <div class="slot-card rounded-2xl p-6 flex flex-col space-y-4">
                 <div>
-                    <span class="text-[10px] tracking-widest text-emerald-400 uppercase font-bold">Studio Export</span>
-                    <h3 class="text-lg font-normal text-stone-200 mt-2">Render Session Track</h3>
-                    <p class="text-xs text-stone-400 font-light mt-1">Bounce a fixed-length, high-quality file of your current mix — fast offline render, not real-time.</p>
+                    <h3 class="card-title">Render Session Track</h3>
+                    <p class="text-xs text-stone-400 font-light mt-1">A fast, offline render of your current mix.</p>
                 </div>
 
                 <!-- License / unlock bar -->
                 <div id="license-bar" class="rounded-xl border border-white/5 bg-stone-950/40 p-3 text-xs space-y-2">
-                    <div class="flex items-center justify-between gap-2">
+                    <div class="flex flex-wrap items-center justify-between gap-2">
                         <span id="license-status" class="text-stone-400">Free version · mix &amp; listen freely · exports capped at 60s</span>
                         <div class="flex items-center gap-3 shrink-0">
                             <a id="license-buy" href="#" target="_blank" rel="noopener" class="text-emerald-400 hover:text-emerald-300 font-semibold whitespace-nowrap">Get the full version →</a>
@@ -376,7 +515,7 @@
                     </div>
                     <div id="license-unlock-row" class="hidden space-y-1.5">
                         <div class="flex gap-2">
-                            <input id="license-key-input" type="text" placeholder="Paste your license key" class="flex-1 bg-stone-900 border border-white/10 rounded-lg p-2 text-[11px] text-stone-200 focus:outline-none focus:border-emerald-500/40">
+                            <input id="license-key-input" type="text" placeholder="Paste your license key" class="flex-1">
                             <button id="license-unlock-btn" class="px-4 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-semibold shrink-0">Unlock</button>
                         </div>
                         <p class="text-[10px] text-stone-500">Your key is in your purchase receipt. No key yet? <a id="license-buy-inline" href="#" target="_blank" rel="noopener" class="text-emerald-400 hover:text-emerald-300 underline underline-offset-2">Buy the full version</a>.</p>
@@ -388,7 +527,7 @@
                     <!-- Length -->
                     <div class="flex flex-col gap-1 text-xs text-stone-400">
                         <span>Length</span>
-                        <select id="render-length" class="bg-stone-900 border border-white/10 rounded-lg p-2 text-[11px] text-stone-300 focus:outline-none">
+                        <select id="render-length">
                             <option value="60">1 minute (preview)</option>
                             <option value="300">5 minutes</option>
                             <option value="600" selected>10 minutes</option>
@@ -400,7 +539,7 @@
                     <!-- Format -->
                     <div class="flex flex-col gap-1 text-xs text-stone-400">
                         <span>Format</span>
-                        <select id="render-format" class="bg-stone-900 border border-white/10 rounded-lg p-2 text-[11px] text-stone-300 focus:outline-none">
+                        <select id="render-format">
                             <option value="wav" selected>WAV (16-bit, lossless)</option>
                             <option value="mp3">MP3 (320 kbps)</option>
                         </select>
@@ -408,16 +547,16 @@
                     <!-- Fade in -->
                     <div class="flex flex-col gap-1 text-xs text-stone-400">
                         <span>Fade in (sec)</span>
-                        <input id="render-fadein" type="number" min="0" max="60" value="6" class="bg-stone-900 border border-white/10 rounded-lg p-2 text-[11px] text-stone-300 focus:outline-none">
+                        <input id="render-fadein" type="number" min="0" max="60" value="6">
                     </div>
                     <!-- Fade out -->
                     <div class="flex flex-col gap-1 text-xs text-stone-400">
                         <span>Fade out (sec)</span>
-                        <input id="render-fadeout" type="number" min="0" max="60" value="8" class="bg-stone-900 border border-white/10 rounded-lg p-2 text-[11px] text-stone-300 focus:outline-none">
+                        <input id="render-fadeout" type="number" min="0" max="60" value="8">
                     </div>
                 </div>
 
-                <label class="flex items-center justify-between text-xs text-stone-400 bg-stone-950/40 p-2 rounded-xl border border-white/5 cursor-pointer">
+                <label class="field-toggle">
                     <span>Normalize level (peak to −1 dB)</span>
                     <input id="render-normalize" type="checkbox" checked class="accent-emerald-500 w-4 h-4">
                 </label>
@@ -432,28 +571,27 @@
             <!-- Preset Panel -->
             <div class="slot-card rounded-2xl p-6 flex flex-col space-y-4">
                 <div>
-                    <span class="text-[10px] tracking-widest text-emerald-400 uppercase font-bold">Preset Recipes</span>
-                    <h3 class="text-lg font-normal text-stone-200 mt-2">Save Your Signature Sound</h3>
-                    <p class="text-xs text-stone-400 font-light mt-1">Store every setting as a reusable recipe so your brand sound stays consistent across tracks.</p>
+                    <h3 class="card-title">Save Your Signature Sound</h3>
+                    <p class="text-xs text-stone-400 font-light mt-1">Store every setting as a reusable recipe.</p>
                 </div>
 
                 <div class="flex flex-col gap-1 text-xs text-stone-400">
                     <span>Load a saved recipe</span>
-                    <select id="preset-select" class="bg-stone-900 border border-white/10 rounded-lg p-2 text-[11px] text-stone-300 focus:outline-none">
+                    <select id="preset-select">
                         <option value="">[ Select preset... ]</option>
                     </select>
                 </div>
 
                 <div class="grid grid-cols-2 gap-3">
                     <button id="preset-save-btn" class="px-4 py-2.5 rounded-full border border-emerald-500/30 bg-emerald-950/20 text-emerald-400 text-xs font-medium hover:bg-emerald-950/40 transition-all">Save current</button>
-                    <button id="preset-delete-btn" class="px-4 py-2.5 rounded-full border border-red-500/30 bg-red-950/10 text-red-400 text-xs font-medium hover:bg-red-950/30 transition-all">Delete selected</button>
+                    <button id="preset-delete-btn" class="px-4 py-2.5 rounded-full border border-white/10 bg-stone-900/60 text-stone-400 text-xs font-medium hover:border-red-500/40 hover:text-red-400 transition-all">Delete selected</button>
                     <button id="preset-export-btn" class="px-4 py-2.5 rounded-full border border-white/10 bg-stone-900/60 text-stone-300 text-xs font-medium hover:bg-stone-800 transition-all">Export .json</button>
-                    <label class="px-4 py-2.5 rounded-full border border-white/10 bg-stone-900/60 text-stone-300 text-xs font-medium hover:bg-stone-800 transition-all cursor-pointer text-center">
+                    <label id="preset-import-label" class="px-4 py-2.5 rounded-full border border-white/10 bg-stone-900/60 text-stone-300 text-xs font-medium hover:bg-stone-800 transition-all cursor-pointer text-center">
                         Import .json
                         <input id="preset-import" type="file" accept="application/json,.json" class="hidden">
                     </label>
                 </div>
-                <p class="text-[10px] text-stone-600 leading-relaxed">Recipes store all controls and built-in library picks. Custom uploaded files can't be saved inside a recipe — you'll be reminded to re-add them.</p>
+                <p class="text-xs text-stone-500 leading-relaxed">Custom uploaded files can't be saved inside a recipe — you'll be reminded to re-add them.</p>
             </div>
 
         </div>
@@ -463,6 +601,8 @@
             <strong class="text-stone-300">Intelligent Studio Console:</strong>
             <div id="console-text" class="text-emerald-500 mt-1">Console online. Select a built-in loop, or drop your own, then start the soundstage...</div>
         </div>
+
+        </div><!-- /studio-workspace -->
 
         <!-- Footer -->
         <footer class="text-center text-[11px] text-stone-500 pt-2 pb-1 space-x-3">
@@ -476,7 +616,7 @@
     </div>
 
     <!-- Background Forest Ambient Grid -->
-    <div class="absolute inset-0 bg-[radial-gradient(circle_800px_at_50%_-200px,rgba(16,185,129,0.05),transparent)] pointer-events-none"></div>
+    <div class="page-texture pointer-events-none" aria-hidden="true"></div>
 
     <script>
         // WEB AUDIO CONTEXT ENGINE
@@ -492,6 +632,9 @@
 
         // Sound Engine Routing Nodes
         let masterGain = null;
+        let musicDuck = null;       // sits between masterGain and destination; ducks under voice-over
+        let voiceBuffer = null;     // decoded narration buffer
+        let voiceSource = null;     // live voice-over playback source
         let synthGainNode = null;
         let lowpassFilter = null;
 
@@ -576,8 +719,9 @@
 
             // Handle Local File Drag & Drop / Selection
             slot.fileInput.addEventListener('change', (e) => {
-                // Clear dropdown visual selection when uploading custom file
+                // Clear library selection (dropdown + clickable list) on upload
                 slot.select.value = "";
+                if (typeof syncLibActive === 'function') syncLibActive(slot);
                 slot.baseKeyRoot = 7; // unknown key for custom uploads → assume G
                 handleFileSelect(slot, e.target.files[0]);
             });
@@ -655,10 +799,31 @@
         }
 
         // Unlocks Audio Context securely on any scroll/touch/tap gesture (iOS safeguard)
+        // Soften the very start and end of a decoded loop so the loop seam
+        // doesn't click/pop. MP3 encoding adds padding that breaks an otherwise
+        // seamless loop; a ~5ms fade at each edge removes the discontinuity.
+        function deClickLoop(buffer) {
+            try {
+                const fade = Math.min(Math.floor(buffer.sampleRate * 0.005),
+                                      Math.floor(buffer.length / 2));
+                if (fade < 1) return buffer;
+                for (let ch = 0; ch < buffer.numberOfChannels; ch++) {
+                    const data = buffer.getChannelData(ch);
+                    const n = data.length;
+                    for (let i = 0; i < fade; i++) {
+                        const g = i / fade;
+                        data[i] *= g;            // fade in at the start
+                        data[n - 1 - i] *= g;    // fade out at the end
+                    }
+                }
+            } catch (e) { /* leave buffer untouched on any error */ }
+            return buffer;
+        }
+
         function initAudioContextOnInteraction() {
             if (!audioCtx) {
                 const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-                audioCtx = new AudioContextClass();
+                audioCtx = new AudioContextClass({ latencyHint: 'playback' });
             }
             if (audioCtx.state === 'suspended') {
                 audioCtx.resume();
@@ -691,7 +856,7 @@
                 initAudioContextOnInteraction();
                 
                 audioCtx.decodeAudioData(evt.target.result, (buffer) => {
-                    slot.audioBuffer = buffer;
+                    slot.audioBuffer = deClickLoop(buffer);
                     slot.card.classList.add('slot-active');
                     slot.status.innerText = "Ready";
                     slot.status.className = "text-[10px] text-emerald-400 font-bold";
@@ -725,7 +890,7 @@
                 if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
                 const arrayBuffer = await response.arrayBuffer();
                 audioCtx.decodeAudioData(arrayBuffer, (decodedBuffer) => {
-                    slot.audioBuffer = decodedBuffer;
+                    slot.audioBuffer = deClickLoop(decodedBuffer);
                     slot.card.classList.add('slot-active');
                     slot.status.innerText = "Ready";
                     slot.status.className = "text-[10px] text-emerald-400 font-bold";
@@ -756,7 +921,7 @@
             logMsg("Initializing Master Audio Context...");
             try {
                 const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-                audioCtx = new AudioContextClass();
+                audioCtx = new AudioContextClass({ latencyHint: 'playback' });
                 
                 if (audioCtx.state === 'suspended') {
                     audioCtx.resume();
@@ -764,7 +929,10 @@
 
                 // 1. Master volume node
                 masterGain = audioCtx.createGain();
-                masterGain.connect(audioCtx.destination);
+                musicDuck = audioCtx.createGain();
+                musicDuck.gain.setValueAtTime(1, audioCtx.currentTime);
+                masterGain.connect(musicDuck);
+                musicDuck.connect(audioCtx.destination);
                 masterGain.gain.setValueAtTime(0.8, audioCtx.currentTime); 
 
                 // 2. Warm lowpass filter for the synth pad (keeps it soft and sub-aquatic)
@@ -964,23 +1132,71 @@
             }
         }
 
-        // Re-tune Slot C's playback rate. "Glide" sweeps the pitch (tape style);
-        // otherwise (Smooth) it ducks the harmonizer gain, snaps the pitch at the
-        // quietest point, and fades back — so there's no audible speed sweep.
+        // Re-tune Slot C. "Smooth" crossfades to a second voice already playing
+        // at the target pitch — equal-power, so there's no pitch swoop and no
+        // dropout, just a gentle bloom into the new harmony. "Glide" keeps the
+        // tape-style pitch sweep on the single voice.
         function harmonizeSlot3(targetRate, smooth) {
             const slot3 = slots[2];
             if (!slot3.sourceNode || !audioCtx) return;
             const now = audioCtx.currentTime;
-            if (smooth && slot3.harmGain) {
-                const hg = slot3.harmGain.gain;
-                hg.cancelScheduledValues(now);
-                hg.setValueAtTime(Math.max(0.0008, hg.value), now);
-                hg.linearRampToValueAtTime(0.0008, now + 0.22);          // duck down
-                slot3.sourceNode.playbackRate.setValueAtTime(targetRate, now + 0.22); // snap at the bottom
-                hg.linearRampToValueAtTime(1, now + 0.62);               // fade back up
-            } else {
-                slot3.sourceNode.playbackRate.setTargetAtTime(targetRate, now, 0.6); // tape glide
+
+            // Glide: sweep the existing voice's speed (tape character).
+            if (!smooth) {
+                slot3.sourceNode.playbackRate.setTargetAtTime(targetRate, now, 0.6);
+                return;
             }
+
+            // Smooth: equal-power crossfade between the old voice and a fresh one
+            // started at the target pitch. Falls back to a quick glide if the
+            // buffer isn't available for some reason.
+            if (!slot3.audioBuffer) {
+                slot3.sourceNode.playbackRate.setTargetAtTime(targetRate, now, 0.25);
+                return;
+            }
+
+            const oldSrc  = slot3.sourceNode;
+            const oldGain = slot3.harmGain;
+
+            const newGain = audioCtx.createGain();
+            newGain.gain.setValueAtTime(0.0001, now);
+            newGain.connect(slot3.gainNode);
+
+            const newSrc = audioCtx.createBufferSource();
+            newSrc.buffer = slot3.audioBuffer;
+            newSrc.loop = true;
+            newSrc.playbackRate.setValueAtTime(targetRate, now);
+            newSrc.connect(newGain);
+            newSrc.start(now);
+
+            const xfade = 0.9, steps = 48;
+            const fadeOut = new Float32Array(steps), fadeIn = new Float32Array(steps);
+            for (let i = 0; i < steps; i++) {
+                const x = i / (steps - 1);
+                fadeOut[i] = Math.max(0.0001, Math.cos(x * Math.PI / 2)); // equal-power out
+                fadeIn[i]  = Math.max(0.0001, Math.sin(x * Math.PI / 2)); // equal-power in
+            }
+            if (oldGain) {
+                try {
+                    oldGain.gain.cancelScheduledValues(now);
+                    oldGain.gain.setValueAtTime(Math.max(0.0001, oldGain.gain.value), now);
+                    oldGain.gain.setValueCurveAtTime(fadeOut, now, xfade);
+                } catch (e) { oldGain.gain.linearRampToValueAtTime(0.0001, now + xfade); }
+            }
+            try {
+                newGain.gain.setValueCurveAtTime(fadeIn, now, xfade);
+            } catch (e) { newGain.gain.linearRampToValueAtTime(1, now + xfade); }
+
+            // Retire the old voice once it has faded out.
+            try { oldSrc.stop(now + xfade + 0.08); } catch (e) {}
+            oldSrc.onended = () => {
+                try { oldSrc.disconnect(); } catch (e) {}
+                try { if (oldGain) oldGain.disconnect(); } catch (e) {}
+            };
+
+            // The new voice + its gain are now the live ones for the next change.
+            slot3.sourceNode = newSrc;
+            slot3.harmGain   = newGain;
         }
 
         // Keeps the Slot C badge honest about the current harmonizer mode.
@@ -1055,34 +1271,36 @@
             function driftMix() {
                 if (!isPlaying || !isDrifting) return;
                 
-                logMsg("Intelligent Remixer calculating new acoustic parameters...");
-                
+                logMsg("Auto-Drift: gently breathing the levels around your mix...");
+
+                // Drift each layer GENTLY within a band anchored to the level
+                // YOU set (read live from the slider). Target = 60–100% of your
+                // level, so a layer only ever dips and recovers — never louder
+                // than you dialed it, and your slider/balance is left untouched.
                 slots.forEach(slot => {
-                    if (slot.audioBuffer) {
-                        const now = audioCtx.currentTime;
-                        const randomTarget = 0.15 + (Math.random() * 0.65);
-                        const fadeDuration = 10 + (Math.random() * 15);
-                        
-                        logMsg("Remixer drifting Slot " + slot.id + " volume to " + Math.round(randomTarget*100) + "% over " + Math.round(fadeDuration) + "s...");
-                        
-                        slot.volSlider.value = Math.round(randomTarget * 100);
-                        slot.volVal.innerText = `${Math.round(randomTarget * 100)}%`;
-                        
-                        slot.gainNode.gain.setValueAtTime(slot.gainNode.gain.value, now);
-                        slot.gainNode.gain.exponentialRampToValueAtTime(randomTarget, now + fadeDuration);
-                    }
+                    if (!slot.audioBuffer || !slot.gainNode) return;
+                    const anchor = slot.volSlider.value / 100;
+                    if (anchor <= 0) return; // muted by you — leave it silent
+                    const now = audioCtx.currentTime;
+                    const target = anchor * (0.6 + Math.random() * 0.4);
+                    const fadeDuration = 14 + (Math.random() * 16); // 14–30s, slow
+                    const startVal = Math.max(slot.gainNode.gain.value, 0.0001);
+                    slot.gainNode.gain.cancelScheduledValues(now);
+                    slot.gainNode.gain.setValueAtTime(startVal, now);
+                    slot.gainNode.gain.exponentialRampToValueAtTime(Math.max(target, 0.0001), now + fadeDuration);
                 });
-                
-                // Drift pad
-                const now = audioCtx.currentTime;
-                const randomSynthTarget = 0.3 + (Math.random() * 0.5);
-                const fadeDurationSynth = 12 + (Math.random() * 12);
-                logMsg(`Remixer drifting Synth Pad volume to ${Math.round(randomSynthTarget*100)}%...`);
-                volSynthSlider.value = Math.round(randomSynthTarget * 100);
-                valSynthText.innerText = `${Math.round(randomSynthTarget * 100)}%`;
-                
-                synthGainNode.gain.setValueAtTime(synthGainNode.gain.value, now);
-                synthGainNode.gain.exponentialRampToValueAtTime(randomSynthTarget, now + fadeDurationSynth);
+
+                // Drift the synth pad the same way, anchored to its slider.
+                const synthAnchor = volSynthSlider.value / 100;
+                if (synthGainNode && synthAnchor > 0) {
+                    const now = audioCtx.currentTime;
+                    const synthTarget = synthAnchor * (0.6 + Math.random() * 0.4);
+                    const fadeDurationSynth = 16 + (Math.random() * 14);
+                    const sStart = Math.max(synthGainNode.gain.value, 0.0001);
+                    synthGainNode.gain.cancelScheduledValues(now);
+                    synthGainNode.gain.setValueAtTime(sStart, now);
+                    synthGainNode.gain.exponentialRampToValueAtTime(Math.max(synthTarget, 0.0001), now + fadeDurationSynth);
+                }
             }
             
             driftMix();
@@ -1108,6 +1326,7 @@
                     stopPulseInterval();
                     stopEntrainment();
                     stopBellInterval();
+                    stopVoiceOver();
 
                     logMsg("Stopping master soundstage and freeing audio blocks...");
                     
@@ -1138,6 +1357,7 @@
                             }
                             pulseGain = null;
                             entrainmentOut = null;
+                            musicDuck = null;
                             
                             // Reset UI state
                             harmonizerDot.className = "w-1.5 h-1.5 rounded-full bg-stone-700";
@@ -1348,7 +1568,10 @@
 
             // --- master chain (mirrors initAudio) ---
             const master = ctx.createGain();
-            master.connect(ctx.destination);
+            const duckBus = ctx.createGain();          // ducks all music beneath the voice-over
+            duckBus.gain.setValueAtTime(1, 0);
+            master.connect(duckBus);
+            duckBus.connect(ctx.destination);
             const baseLevel = 0.8;
 
             const lp = ctx.createBiquadFilter();
@@ -1385,11 +1608,12 @@
                 const lvl = slot.volSlider.value / 100;
                 g.gain.setValueAtTime(lvl, 0);
 
-                // Auto-Drift volume automation (deterministic per render)
-                if (useDrift) {
+                // Auto-Drift volume automation — gentle dips anchored to the
+                // set level (60–100% of it), matching live playback.
+                if (useDrift && lvl > 0) {
                     for (let t = DRIFT_STEP; t < duration; t += DRIFT_STEP) {
-                        const tgt = 0.15 + Math.random() * 0.65;
-                        const fade = 10 + Math.random() * 15;
+                        const tgt = lvl * (0.6 + Math.random() * 0.4);
+                        const fade = 14 + Math.random() * 16;
                         g.gain.linearRampToValueAtTime(tgt, Math.min(duration, t + fade));
                     }
                 }
@@ -1426,11 +1650,12 @@
                 src.stop(duration);
             });
 
-            // Drift the pad too
-            if (useDrift) {
+            // Drift the pad too — anchored to its set level (60–100%).
+            const synthLvl = volSynthSlider.value / 100;
+            if (useDrift && synthLvl > 0) {
                 for (let t = DRIFT_STEP; t < duration; t += DRIFT_STEP) {
-                    const tgt = 0.3 + Math.random() * 0.5;
-                    const fade = 12 + Math.random() * 12;
+                    const tgt = synthLvl * (0.6 + Math.random() * 0.4);
+                    const fade = 16 + Math.random() * 14;
                     synthGain.gain.linearRampToValueAtTime(tgt, Math.min(duration, t + fade));
                 }
             }
@@ -1497,6 +1722,25 @@
                     const te = Math.max(1, duration - Math.max(fadeOut, 2) - 2);
                     playBell(ctx, master, bellRootAt(te), te, bl);
                 }
+            }
+
+            // Voice-over: baked in after the intro fade; the music ducks beneath it.
+            if (voiceBuffer) {
+                const vStart = Math.max(fadeIn, 0.3);
+                const vEnd   = Math.min(duration, vStart + voiceBuffer.duration);
+                const vg = ctx.createGain();
+                vg.gain.setValueAtTime(voiceLevel.value / 100, 0);
+                vg.connect(ctx.destination);           // parallel to the music, so it isn't ducked
+                const vsrc = ctx.createBufferSource();
+                vsrc.buffer = voiceBuffer;
+                vsrc.connect(vg);
+                vsrc.start(vStart);
+                vsrc.stop(vEnd + 0.05);
+                const duckTo = Math.max(0.0001, 1 - (voiceDuck.value / 100));
+                duckBus.gain.setValueAtTime(1, Math.max(0, vStart - 0.4));
+                duckBus.gain.linearRampToValueAtTime(duckTo, vStart);
+                duckBus.gain.setValueAtTime(duckTo, Math.max(vStart, vEnd - 0.8));
+                duckBus.gain.linearRampToValueAtTime(1, vEnd);
             }
 
             return await ctx.startRendering();
@@ -1776,7 +2020,8 @@
 
             // Entrainment settings
             if (p.entrain) {
-                entrainBand.value = p.entrain.band;
+                // Migrate presets saved before Beta was replaced by 40 Hz Gamma.
+                entrainBand.value = String(p.entrain.band) === '18' ? '40' : p.entrain.band;
                 entrainCarrier.value = p.entrain.carrier;
                 entrainCarrier.dispatchEvent(new Event('input'));
                 entrainLevel.value = p.entrain.level;
@@ -1877,6 +2122,71 @@
         ===================================================================== */
         const LIBRARY_SLOT_CATEGORY = { 1: 'grounding', 2: 'texture', 3: 'sparks' };
 
+        // ---- Clickable sound lists (drive the hidden <select> so the audio
+        //      engine and Shuffle keep working unchanged) ----
+        const SPARK_TAGS = ['cinematic', 'grounded', 'ethereal', 'deep', 'nostalgic', 'hopeful'];
+        const activeSparkTags = new Set();
+
+        function syncLibActive(slot) {
+            const list = document.getElementById('library-list-' + slot.id);
+            if (!list) return;
+            const cur = slot.select.value;
+            list.querySelectorAll('.lib-item').forEach(b => {
+                b.classList.toggle('lib-item-active', b.dataset.file === cur);
+            });
+        }
+
+        function renderSlotList(slot, items) {
+            const list = document.getElementById('library-list-' + slot.id);
+            if (!list) return;
+            list.innerHTML = '';
+            items.forEach(it => {
+                const b = document.createElement('button');
+                b.type = 'button';
+                b.className = 'lib-item';
+                b.textContent = it.name;
+                b.dataset.file = './' + it.file;
+                if (it.tags && it.tags.length) b.dataset.tags = it.tags.join(',');
+                b.addEventListener('click', () => {
+                    initAudioContextOnInteraction();
+                    // Click the active one again to clear the slot.
+                    slot.select.value = (slot.select.value === b.dataset.file) ? '' : b.dataset.file;
+                    slot.select.dispatchEvent(new Event('change'));
+                });
+                list.appendChild(b);
+            });
+            syncLibActive(slot);
+        }
+
+        function renderSparkChips() {
+            const wrap = document.getElementById('spark-tags');
+            if (!wrap) return;
+            wrap.innerHTML = '';
+            SPARK_TAGS.forEach(tag => {
+                const c = document.createElement('button');
+                c.type = 'button';
+                c.className = 'chip' + (activeSparkTags.has(tag) ? ' chip-active' : '');
+                c.textContent = tag;
+                c.addEventListener('click', () => {
+                    if (activeSparkTags.has(tag)) activeSparkTags.delete(tag);
+                    else activeSparkTags.add(tag);
+                    c.classList.toggle('chip-active');
+                    applySparkFilter();
+                });
+                wrap.appendChild(c);
+            });
+        }
+
+        function applySparkFilter() {
+            const list = document.getElementById('library-list-3');
+            if (!list) return;
+            list.querySelectorAll('.lib-item').forEach(b => {
+                if (activeSparkTags.size === 0) { b.style.display = ''; return; }
+                const tags = (b.dataset.tags || '').split(',').filter(Boolean);
+                b.style.display = tags.some(t => activeSparkTags.has(t)) ? '' : 'none';
+            });
+        }
+
         async function loadLibrary() {
             try {
                 const res = await fetch('library.json', { cache: 'no-store' });
@@ -1897,7 +2207,13 @@
                         slot.select.appendChild(o);
                         total++;
                     });
+                    renderSlotList(slot, items);
                 });
+                renderSparkChips();
+                applySparkFilter();
+                // Keep the clickable highlight in sync with any value change
+                // (clicks, Shuffle, presets all dispatch 'change' on the select).
+                slots.forEach(s => s.select.addEventListener('change', () => syncLibActive(s)));
                 logMsg(`Sound library loaded: ${total} samples across ${Object.keys(lib).length} categories.`);
             } catch (e) {
                 logMsg(`Could not load library.json (${e.message}). Use the file-upload option in each slot instead.`, true);
@@ -2132,6 +2448,31 @@
             }
         });
 
+        // ---- Toggle buttons for the entrainment dropdowns. They drive the
+        //      hidden <select> so the audio engine reads the same .value. ----
+        function buildSegFromSelect(selectId, segId) {
+            const sel = document.getElementById(selectId);
+            const seg = document.getElementById(segId);
+            if (!sel || !seg) return;
+            seg.innerHTML = '';
+            Array.from(sel.options).forEach(opt => {
+                const b = document.createElement('button');
+                b.type = 'button';
+                b.className = 'seg-btn' + (opt.selected ? ' seg-btn-active' : '');
+                b.textContent = opt.textContent;
+                b.dataset.value = opt.value;
+                b.addEventListener('click', () => {
+                    sel.value = opt.value;
+                    seg.querySelectorAll('.seg-btn').forEach(x =>
+                        x.classList.toggle('seg-btn-active', x.dataset.value === sel.value));
+                    sel.dispatchEvent(new Event('change'));
+                });
+                seg.appendChild(b);
+            });
+        }
+        buildSegFromSelect('entrain-mode', 'entrain-mode-seg');
+        buildSegFromSelect('entrain-band', 'entrain-band-seg');
+
         /* =====================================================================
            LICENSE GATE — free demo caps exports at 60s; a valid Gumroad key
            unlocks all lengths. Validation goes through a serverless function
@@ -2274,6 +2615,87 @@
         // If interval changes mid-session, re-grid it
         bellIntervalSelect.addEventListener('change', () => { if (isPlaying) startBellInterval(); });
 
+        /* =====================================================================
+           VOICE-OVER — upload a narration, preview it over the live mix, and
+           bake it into the export with the music ducking beneath it.
+        ===================================================================== */
+        const voiceFile     = document.getElementById('voice-file');
+        const voiceStatus   = document.getElementById('voice-status');
+        const voiceLevel    = document.getElementById('voice-level');
+        const voiceLevelVal = document.getElementById('voice-level-val');
+        const voiceDuck     = document.getElementById('voice-duck');
+        const voiceDuckVal  = document.getElementById('voice-duck-val');
+        const voicePlayBtn  = document.getElementById('voice-play-btn');
+
+        voiceLevel.addEventListener('input', () => {
+            voiceLevelVal.textContent = voiceLevel.value;
+            if (voiceSource && voiceSource._vg && audioCtx) {
+                voiceSource._vg.gain.setValueAtTime(voiceLevel.value / 100, audioCtx.currentTime);
+            }
+        });
+        voiceDuck.addEventListener('input', () => { voiceDuckVal.textContent = voiceDuck.value; });
+
+        // Decode an uploaded narration into voiceBuffer.
+        voiceFile.addEventListener('change', (e) => {
+            const file = e.target.files && e.target.files[0];
+            if (!file) return;
+            voiceStatus.textContent = "Decoding…";
+            initAudioContextOnInteraction();
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                audioCtx.decodeAudioData(ev.target.result, (buffer) => {
+                    voiceBuffer = buffer;
+                    voicePlayBtn.disabled = false;
+                    voiceStatus.textContent = `${file.name} · ${buffer.duration.toFixed(1)}s`;
+                    logMsg(`Voice-over loaded: "${file.name}" (${buffer.duration.toFixed(1)}s)`);
+                }, () => {
+                    voiceStatus.textContent = "Couldn't read that file";
+                    logMsg(`Failed to decode voice-over "${file.name}".`, true);
+                });
+            };
+            reader.readAsArrayBuffer(file);
+        });
+
+        // Smoothly ramp the music duck gain (1 = full music, lower = ducked).
+        function setMusicDuck(target, ramp) {
+            if (!musicDuck || !audioCtx) return;
+            const now = audioCtx.currentTime;
+            musicDuck.gain.cancelScheduledValues(now);
+            musicDuck.gain.setValueAtTime(musicDuck.gain.value, now);
+            musicDuck.gain.linearRampToValueAtTime(Math.max(0.0001, target), now + ramp);
+        }
+
+        function stopVoiceOver() {
+            if (voiceSource) {
+                try { voiceSource.onended = null; voiceSource.stop(); voiceSource.disconnect(); } catch (e) {}
+                if (voiceSource._vg) { try { voiceSource._vg.disconnect(); } catch (e) {} }
+                voiceSource = null;
+            }
+            setMusicDuck(1, 0.5);
+            voicePlayBtn.textContent = "▶ Play voice-over";
+        }
+
+        function playVoiceOver() {
+            if (!voiceBuffer) return;
+            initAudioContextOnInteraction();
+            if (voiceSource) { stopVoiceOver(); return; }   // toggle off if already playing
+            const now = audioCtx.currentTime;
+            const vg = audioCtx.createGain();
+            vg.gain.setValueAtTime(voiceLevel.value / 100, now);
+            vg.connect(audioCtx.destination);               // bypass the duck so the voice stays full
+            const src = audioCtx.createBufferSource();
+            src.buffer = voiceBuffer;
+            src.connect(vg);
+            src._vg = vg;
+            src.start(now + 0.05);
+            voiceSource = src;
+            setMusicDuck(1 - (voiceDuck.value / 100), 0.4);  // duck the music under the voice
+            voicePlayBtn.textContent = "■ Stop voice-over";
+            src.onended = () => { if (voiceSource === src) stopVoiceOver(); };
+        }
+
+        voicePlayBtn.addEventListener('click', playVoiceOver);
+
         // Restore a saved license on load (optimistic), then re-verify in the background.
         (function initLicense() {
             let cached = null;
@@ -2289,5 +2711,8 @@
             }
         })();
     </script>
+    <script src="session-presets.js"></script>
+    <script src="studio-ui.js"></script>
+    <script src="workspace-layout.js"></script>
 </body>
 </html>
